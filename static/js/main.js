@@ -15,3 +15,6 @@ function showToast(message, err = false, duration = 4000) {
         toast.classList.remove('show');
     }, duration);
 }
+
+const larguraViewport = window.innerWidth;
+console.log(`Largura da viewport: ${larguraViewport}px`);

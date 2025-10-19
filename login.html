@@ -18,9 +18,9 @@
         <div class="card">
             <form id="login-form" onsubmit="event.preventDefault(); login();">
                 <div class="input-group login-card">
-                    <input type="text" id="user" placeholder="E-mail">
-                    <input type="password" id="password" placeholder="Senha">
-                    <button type="submit" class="btn btn-primary">
+                    <input type="email" id="email" placeholder="E-mail" required>
+                    <input type="password" id="password" placeholder="Senha" required>
+                    <button type="submit" class="btn btn-primary login">
                         <span>🔓</span> Autenticar
                     </button>
                 </div>
@@ -40,8 +40,7 @@
 
     <div id="toast">
         <span id="message">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta quidem dolores nesciunt repudiandae.
-            Consequatur.
+            <!-- Mensagem de notificação -->
         </span>
     </div>
 

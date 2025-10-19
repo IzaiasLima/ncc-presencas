@@ -1,5 +1,12 @@
 var participantes = ['João Silva', 'Maria Santos', 'Pedro Oliveira', 'Ana Costa'];
-var presencas = {};
+
+var presencas = {
+    'João Silva-43': true,
+    'Pedro Oliveira-44': true,
+    'Jose-44': true,
+    'Ana Costa-42': true,
+    'João Silva-42': true
+}
 
 function calcularSemanaAtual() {
     var hoje = new Date();
@@ -24,8 +31,8 @@ function adicionarParticipante() {
         input.value = '';
         atualizarTabela();
 
-        document.getElementById('semanaAtual').value = semanaAtualSistema;
-        document.getElementById('semanaAtualLabel').textContent = semanaAtualSistema;
+        // document.getElementById('semanaAtual').value = semanaAtualSistema;
+        // document.getElementById('semanaAtualLabel').textContent = semanaAtualSistema;
         atualizarTabela();
     }
 }
@@ -39,6 +46,9 @@ function togglePresenca(participante, semana) {
     var chave = participante + '-' + semana;
     presencas[chave] = !presencas[chave];
     atualizarTabela();
+
+    console.log(presencas);
+
 }
 
 function calcularTotalSemana(semana) {
@@ -56,7 +66,10 @@ function getSemanasVisiveis() {
     var semanaAtual = parseInt(document.getElementById('semanaAtual').value) || semanaAtualSistema;
     var semanas = [];
 
-    for (var i = 0; i < 5; i++) {
+    const isMobile = window.innerWidth <= 580;
+    const qtdSemanas = isMobile ? 3 : 5;
+
+    for (var i = 0; i < qtdSemanas; i++) {
         var semana = Math.min(52, Math.max(1, semanaAtual - 2 + i));
         if (semanas.length === 0 || semanas[semanas.length - 1] !== semana) {
             semanas.push(semana);
@@ -66,7 +79,7 @@ function getSemanasVisiveis() {
     return semanas;
 }
 
-function selecionarSemanaAtual(){
+function selecionarSemanaAtual() {
     document.getElementById('semanaAtual').value = semanaAtualSistema;
     atualizarTabela()
 }
@@ -92,10 +105,11 @@ function atualizarTabela() {
     for (var i = 0; i < semanasVisiveis.length; i++) {
         var semana = semanasVisiveis[i];
         var estilo = semana === semanaAtualSistema ? 'text-align: center; background-color: #e1fdddff; font-weight: bold;' : 'text-align: center;';
-        cabecalho.innerHTML += '<th style="' + estilo + '">S' + semana + (semana === semanaAtualSistema ? ' ★' : '') + '</th>';
+        var label = (semana === semanaAtualSistema ? '★' : 'S' + semana);
+        cabecalho.innerHTML += `<th style="${estilo}">${label}</th>`;
     }
 
-    cabecalho.innerHTML += '<th style="text-align: center;">Ações</th>';
+    // cabecalho.innerHTML += '<th style="text-align: center;">Ações</th>';
 
     var corpo = document.getElementById('corpoTabela');
     corpo.innerHTML = '';
@@ -106,7 +120,21 @@ function atualizarTabela() {
 
         var tdNome = document.createElement('td');
         tdNome.style.fontWeight = '500';
-        tdNome.textContent = participante;
+        // tdNome.textContent = participante;
+
+        var action = document.createElement('a');
+        action.className = 'action';
+        action.innerHTML = participante;
+        action.setAttribute('data-index', p);
+
+        action.onclick = function () {
+            var idx = parseInt(this.getAttribute('data-index'));
+            const msgTemp = `Frequência de ${participantes[idx]}: \nDetalhes indisponíveis.`;
+            showToast(msgTemp);
+        };
+
+        tdNome.appendChild(action);
+
         linha.appendChild(tdNome);
 
         for (var s = 0; s < semanasVisiveis.length; s++) {
@@ -126,7 +154,9 @@ function atualizarTabela() {
             btn.setAttribute('data-participante', participante);
             btn.setAttribute('data-semana', semana);
 
-            if (semana !== semanaAtualSistema) {
+            // Define semana ativa apenas para a semana atual do sistema
+            // if (semana !== semanaAtualSistema) {
+            if (false) {
                 btn.disabled = true;
                 btn.style.cursor = 'not-allowed';
                 btn.style.opacity = '0.5';
@@ -142,18 +172,23 @@ function atualizarTabela() {
             linha.appendChild(td);
         }
 
+        // Coluna AÇÕES
         var tdAcoes = document.createElement('td');
         tdAcoes.style.textAlign = 'center';
-        var btnRemover = document.createElement('button');
-        btnRemover.className = 'remove-btn';
-        btnRemover.innerHTML = '×';
-        btnRemover.setAttribute('data-index', p);
-        btnRemover.onclick = function () {
+        var btnActions = document.createElement('button');
+        btnActions.className = 'btn-actions';
+        btnActions.innerHTML = '<span class="fa fa-bar-chart"></span>';
+
+        btnActions.setAttribute('data-index', p);
+
+        btnActions.onclick = function () {
             var idx = parseInt(this.getAttribute('data-index'));
-            removerParticipante(idx);
+            const msgTemp = `Frequência de ${participantes[idx]}: \nDetalhes indisponíveis.`;
+            showToast(msgTemp);
         };
-        tdAcoes.appendChild(btnRemover);
-        linha.appendChild(tdAcoes);
+
+        tdAcoes.appendChild(btnActions);
+        // linha.appendChild(tdAcoes);
 
         corpo.appendChild(linha);
     }
@@ -177,8 +212,8 @@ function atualizarTabela() {
         linhaTotal.appendChild(tdTotal);
     }
 
-    var tdAcoesVazio = document.createElement('td');
-    linhaTotal.appendChild(tdAcoesVazio);
+    // var tdAcoesVazio = document.createElement('td');
+    // linhaTotal.appendChild(tdAcoesVazio);
 
     corpo.appendChild(linhaTotal);
 }

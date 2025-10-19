@@ -21,7 +21,18 @@ async function handleLogin(username, password) {
 }
 
 function login() {
-  handleLogin('user@example.com', 'user')
+
+  const dataForm = document.getElementById('login-form');
+
+  if (!dataForm.checkValidity()) {
+    showToast('Por favor, preencha os campos de e-mail e senha.', true);
+    return;
+  }
+
+  const username = dataForm.elements['email'].value;
+  const password = dataForm.elements['password'].value;
+
+  handleLogin(username, password)
     .then(data => {
       console.log('Login bem-sucedido!', data);
 
