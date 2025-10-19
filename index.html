@@ -1,0 +1,81 @@
+</head>
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequência Semanal - NCC</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>Frequência Semanal do NCC</h1>
+                <img class="login" src="/static/images/exit.png" onclick="event.preventDefault(); logout();" alt="exit">
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="novoParticipante" placeholder="Nome do participante"
+                    onkeypress="if(event.key==='Enter') adicionarParticipante()">
+                <button class="btn btn-primary" onclick="adicionarParticipante()">
+                    <span>+</span> Adicionar
+                </button>
+            </div>
+
+            <div class="navigation">
+                <div class="semanas">
+                    <label>Semana:</label>
+                    <input type="number" id="semanaAtual" min="1" max="52" onchange="atualizarTabela()">
+                    <span style="color: #6b7280;">&nbsp;de&nbsp;52</span>
+                </div>
+
+                <button class="btn btn-primary" onclick="selecionarSemanaAtual()">Exibir Semana Atual</button>
+
+                <button class="btn btn-success" onclick="exportarCSV()">
+                    <span>⬇</span> Exportar CSV
+                </button>
+
+            </div>
+
+            <div class="table-container">
+                <table id="tabelaFrequencia">
+                    <thead>
+                        <tr id="cabecalho"></tr>
+                    </thead>
+                    <tbody id="corpoTabela"></tbody>
+                </table>
+            </div>
+
+            <div id="estadoVazio" class="empty-state" style="display: none;">
+                Adicione participantes para começar o controle de frequência
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h2>Instruções:</h2>
+            <ul>
+                <li>• Adicione participantes usando o campo acima</li>
+                <li>• Clique nas células para marcar presença (verde) ou ausência (cinza)</li>
+                <li>• Use "Ir para semana" para navegar pelas 52 semanas</li>
+                <li>• Apenas a semana atual (destacada em azul com ★) pode ser editada</li>
+                <li>• A linha "Total" mostra a soma de participantes presentes em cada semana</li>
+                <li>• Exporte os dados em CSV para usar no Google Sheets</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="/static/js/auth.js"></script>
+    <script>
+        // Verifica autenticação antes de executar o script principal
+        if (window.auth) {
+            window.auth.requireLogin();
+        }
+    </script>
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/login.js"></script>
+</body>
+
+</html>

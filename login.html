@@ -1,0 +1,53 @@
+</head>
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequência Semanal - Login</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <div class="container login">
+        <div class="header login">
+            <h1>Autenticação</h1>
+        </div>
+
+        <div class="card">
+            <form id="login-form" onsubmit="event.preventDefault(); login();">
+                <div class="input-group login-card">
+                    <input type="text" id="user" placeholder="E-mail">
+                    <input type="password" id="password" placeholder="Senha">
+                    <button type="submit" class="btn btn-primary">
+                        <span>🔓</span> Autenticar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="instructions">
+            <h2>Instruções:</h2>
+            <ul>
+                <li>• Use o e-mail e a senha que você cadastrou no sistema para se autenticar.</li>
+                <li>• Para recuperação senha esquecida, entre em contato pelo e-mail:
+                    <a href="mailto: contato@izaias.com.br">contato@izaias.com.br</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="toast">
+        <span id="message">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta quidem dolores nesciunt repudiandae.
+            Consequatur.
+        </span>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/auth.js"></script>
+    <script src="/static/js/login.js"></script>
+</body>
+
+</html>
