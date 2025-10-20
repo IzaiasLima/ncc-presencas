@@ -1,6 +1,8 @@
 async function handleLogin(username, password) {
+  const URL = API_URL + '/token';
+
   try {
-    const response = await fetch('http://localhost:8000/token', {
+    const response = await fetch(URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

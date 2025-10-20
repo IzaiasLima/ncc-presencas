@@ -1,11 +1,98 @@
-var participantes = ['João Silva', 'Maria Santos', 'Pedro Oliveira', 'Ana Costa'];
+// var participantes = ['João Silva', 'Maria Santos', 'Pedro Oliveira', 'Ana Costa'];
+var participantes = [];
 
-var presencas = {
-    'João Silva-43': true,
-    'Pedro Oliveira-44': true,
-    'Jose-44': true,
-    'Ana Costa-42': true,
-    'João Silva-42': true
+
+var presencas = {}
+// var presencas = {
+//     'João Silva-43': true,
+//     'Pedro Oliveira-44': true,
+//     'Jose-44': true,
+//     'Ana Costa-42': true,
+//     'João Silva-42': true
+// }
+
+const endpointParticipantes = API_URL + '/people';
+const endpointPresencas = API_URL + '/presence';
+
+carregarDadosDaApi();
+
+async function carregarDadosDaApi() {
+    const headers = {
+        'Authorization': `Bearer ${window.auth.getToken()}`,
+        'Content-Type': 'application/json'
+    }
+
+    try {
+        const [resPart, resPres] = await Promise.all([
+            fetch(endpointParticipantes, { headers: headers }),
+            fetch(endpointPresencas, { headers: headers })
+        ]);
+
+        if (resPart && resPart.ok) {
+            const data = await resPart.json();
+            data.map(pessoa => participantes.push(pessoa.name));
+
+        } else {
+            console.warn('Não foi possível carregar lista de participantes:', resPart && resPart.status);
+            showToast('Não foi possível carregar lista de participantes. Favor se autenticar novamente.', true);
+        }
+
+        if (resPres && resPres.ok) {
+            const data = await resPres.json();
+
+            // limpa o objeto presencas
+            for (const k in presencas) {
+                if (Object.prototype.hasOwnProperty.call(presencas, k)) {
+                    delete presencas[k];
+                }
+            }
+
+            data.map(p => presencas[p.key] = p.present);
+
+        } else {
+            console.warn('Não foi possível carregar presenças:', resPres && resPres.status);
+            showToast('Não foi possível carregar a lista de presenças. Favor se autenticar novamente.', true);
+        }
+    } catch (err) {
+        console.error('Erro ao carregar dados da API:', err);
+    }
+
+    // Função que persiste alteração de uma presença na API
+    async function persistirPresenca(chave, valor) {
+        await fetch(endpointPresencas, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${window.auth.getToken()}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ key: chave, present: !!valor })
+        }).then(response => {
+            if (!response.ok) {
+                showToast(`Não foi possível registrar a presença (Erro: ${response.status}).`, true);
+            }
+        });
+    }
+
+    // Substitui o objeto presencas por um Proxy que persiste alterações automaticamente
+    const storePresencas = presencas;
+    presencas = new Proxy(storePresencas, {
+        set(target, prop, value) {
+            target[prop] = value;
+            // persistir de forma assíncrona (não bloqueia a UI)
+            persistirPresenca(prop.toString(), value);
+            return true;
+        },
+        deleteProperty(target, prop) {
+            const existed = prop in target;
+            if (existed) {
+                delete target[prop];
+                persistirPresenca(prop.toString(), false); // opcional: informar remoção
+            }
+            return existed;
+        }
+    });
+
+    atualizarTela();
 }
 
 function calcularSemanaAtual() {
@@ -22,32 +109,43 @@ function calcularSemanaAtual() {
 
 var semanaAtualSistema = calcularSemanaAtual();
 
-function adicionarParticipante() {
+async function adicionarParticipante() {
     var input = document.getElementById('novoParticipante');
     var nome = input.value.trim();
 
     if (nome) {
         participantes.push(nome);
         input.value = '';
-        atualizarTabela();
 
-        // document.getElementById('semanaAtual').value = semanaAtualSistema;
-        // document.getElementById('semanaAtualLabel').textContent = semanaAtualSistema;
-        atualizarTabela();
+
+        await fetch(endpointParticipantes, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${window.auth.getToken()}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: nome, phone: '61 00000-0000' })
+        }).then(response => {
+            if (!response.ok) {
+                showToast(`Não foi possível registrar participante (Erro: ${response.status}).`, true);
+            }
+        });
+
+        atualizarTela();
     }
 }
 
 function removerParticipante(index) {
     participantes.splice(index, 1);
-    atualizarTabela();
+    atualizarTela();
 }
 
 function togglePresenca(participante, semana) {
     var chave = participante + '-' + semana;
     presencas[chave] = !presencas[chave];
-    atualizarTabela();
+    atualizarTela();
 
-    console.log(presencas);
+    // console.log(presencas);
 
 }
 
@@ -81,10 +179,10 @@ function getSemanasVisiveis() {
 
 function selecionarSemanaAtual() {
     document.getElementById('semanaAtual').value = semanaAtualSistema;
-    atualizarTabela()
+    atualizarTela()
 }
 
-function atualizarTabela() {
+function atualizarTela() {
     var tabela = document.getElementById('tabelaFrequencia');
     var estadoVazio = document.getElementById('estadoVazio');
 
@@ -249,4 +347,4 @@ function exportarCSV() {
     link.click();
 }
 
-atualizarTabela();
+atualizarTela();
