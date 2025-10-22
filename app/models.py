@@ -18,19 +18,20 @@ class UserDB(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-    people = relationship("PersonDB", back_populates="owner")
+    person = relationship("PersonDB", back_populates="owner")
 
 
 class PersonDB(Base):
     """Modelo de pessoa"""
 
-    __tablename__ = "people"
+    __tablename__ = "person"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     phone = Column(String, nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
-    owner = relationship("UserDB", back_populates="people")
+    owner = relationship("UserDB", back_populates="person")
+    presence = relationship("PresenceDB", back_populates="person")
 
 
 class PresenceDB(Base):
@@ -39,7 +40,8 @@ class PresenceDB(Base):
     __tablename__ = "presence"
 
     id = Column(Integer, primary_key=True, index=True)
-    key = Column(String, nullable=False)
+    week = Column(Integer, nullable=False)
     present = Column(Boolean, nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
-    # owner = relationship("UserDB", back_populates="people")
+    person_id = Column(Integer, ForeignKey("person.id"))
+    person = relationship("PersonDB", back_populates="presence")

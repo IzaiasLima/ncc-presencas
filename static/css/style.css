@@ -65,7 +65,12 @@ body {
     }
 
     @media (width <=768px) {
-        flex-direction: column-reverse;
+        /* flex-direction: column-reverse; */
+
+        & h1 {
+            font-size: 1.45rem;
+        }
+
         /* align-items: flex-start; */
     }
 }
@@ -75,6 +80,11 @@ img.login {
     width: 32px;
     height: 32px;
     cursor: pointer;
+
+    @media (width <=768px) {
+        width: 22px;
+        height: 22px;
+    }
 }
 
 h1 {
@@ -83,6 +93,8 @@ h1 {
 }
 
 .btn {
+    display: flex;
+    height: 40px;
     padding: 10px 16px;
     border: none;
     border-radius: 8px;
@@ -94,33 +106,32 @@ h1 {
     gap: 8px;
     transition: all 0.2s;
 
-}
-
-@media (width <=768px) {
-    .btn .btn-label {
-        display: none;
+    &.primary {
+        background: #2563eb;
+        color: white;
     }
-}
-
-.btn-primary {
-    background: #2563eb;
-    color: white;
 
     &:hover {
-        background-color: #1d4ed8;
+        background-color: #6686df;
     }
+
+    & .success {
+        background-color: #16a34a;
+        color: white;
+    }
+
+    /* &:hover {
+        background-color: #15803d;
+    } */
 
     &.login {
         margin-top: 14px;
     }
-}
 
-.btn-success {
-    background-color: #16a34a;
-    color: white;
-
-    &:hover {
-        background-color: #15803d;
+    @media (width <=768px) {
+        .btn.label {
+            display: none;
+        }
     }
 }
 
@@ -220,9 +231,10 @@ table {
 
 th,
 td {
+    width: 20px;
     border: 1px solid #d1d5db;
     padding: 12px;
-    text-align: left;
+    text-align: center
 }
 
 th {
@@ -238,6 +250,7 @@ td:first-child,
 th:first-child {
     position: sticky;
     left: 0;
+     text-align: left;
     background: white;
     z-index: 10;
 }

@@ -3,7 +3,7 @@
 Schemas Pydantic para validação de dados
 """
 
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel, EmailStr, ConfigDict
 
 
@@ -47,14 +47,17 @@ class PersonUpdate(BaseModel):
 class PresenceCreate(BaseModel):
     """Schema para criação de presencas"""
 
-    key: str
+    person_id: int
+    week: int
     present: bool
 
 
 class PresenceRead(PresenceCreate):
-    """Schema para leitura de pessoa"""
+    """Schema para leitura das presencas"""
 
     id: int
     owner_id: int
+    person: PersonRead
 
     model_config = ConfigDict(from_attributes=True)
+

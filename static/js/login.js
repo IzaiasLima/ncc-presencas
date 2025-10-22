@@ -1,3 +1,12 @@
+
+// Se logado, adiciona token ao cabeçalho da requisição
+document.body.addEventListener('htmx:configRequest', function (evt) {
+  if (window.auth.isLoggedIn()) {
+    evt.detail.headers['Authorization'] = 'Bearer ' + window.auth.getToken();
+  }
+});
+
+
 async function handleLogin(username, password) {
   const URL = API_URL + '/token';
 

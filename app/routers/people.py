@@ -23,10 +23,31 @@ def create_person(
     person = PersonDB(
         name=person_in.name, phone=person_in.phone, owner_id=current_user.id
     )
-    db.add(person)
-    db.commit()
-    db.refresh(person)
-    return person
+
+    try:
+        existing_person = (
+            db.query(PersonDB)
+            .filter(
+                PersonDB.name == person_in.name,
+                PersonDB.owner_id == current_user.id,
+            )
+            .first()
+        )
+        if existing_person:
+            raise HTTPException(
+                status_code=400, detail="Person with this name already exists"
+            )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+    try:
+        db.add(person)
+        db.commit()
+        db.refresh(person)
+        return person
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}.")
 
 
 @router.get("", response_model=List[PersonRead])
@@ -48,14 +69,17 @@ def get_person(
     db: Session = Depends(get_db),
 ):
 
-    person = (
-        db.query(PersonDB)
-        .filter(PersonDB.id == person_id, PersonDB.owner_id == current_user.id)
-        .first()
-    )
-    if not person:
-        raise HTTPException(status_code=404, detail="Person not found")
-    return person
+    dados = get_person(db, person_id, current_user)
+    
+    # person = (
+    #     db.query(PersonDB)
+    #     .filter(PersonDB.id == person_id, PersonDB.owner_id == current_user.id)
+    #     .first()
+    # )
+    # if not person:
+    #     raise HTTPException(status_code=404, detail="Person not found")
+    
+    return dados
 
 
 @router.put("/{person_id}", response_model=PersonRead)
@@ -98,3 +122,15 @@ def delete_person(
     db.delete(person)
     db.commit()
     return None
+
+def get_person (db, person_id: int, current_user):
+    person = (
+        db.query(PersonDB)
+        .filter(PersonDB.id == person_id, PersonDB.owner_id == current_user.id)
+        .first()
+    )
+     
+    if not person:
+        raise HTTPException(status_code=404, detail="Person not found")
+    return person
+    

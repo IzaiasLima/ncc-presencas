@@ -2,7 +2,7 @@
 
 SECRET_KEY = "replace-this-with-a-random-secret"  # change in production
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 60*60*24
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///database/people.db"
 
