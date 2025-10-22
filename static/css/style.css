@@ -250,7 +250,7 @@ td:first-child,
 th:first-child {
     position: sticky;
     left: 0;
-     text-align: left;
+    text-align: left;
     background: white;
     z-index: 10;
 }
@@ -289,6 +289,9 @@ a.action {
     align-items: center;
     justify-content: center;
     margin: 0 auto;
+    color: white;
+    font-size: 2rem;
+    font-weight: 600;
 
     @media (width <=768px) {
         width: 28px;

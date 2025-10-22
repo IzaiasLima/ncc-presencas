@@ -1,11 +1,19 @@
+const presenceURL = `${API_URL}/presence`
+
+const header = {
+    'Authorization': `Bearer ${window.auth.getToken()}`,
+    'Content-Type': 'application/json'
+}
+
+
 async function fetchData() {
     try {
-        const response = await fetch('http://localhost:8000/presence', {
-            headers: {
-                'Authorization': `Bearer ${window.auth.getToken()}`,
-                'Content-Type': 'application/json'
-            }
-        });
+        const response = await fetch(presenceURL, { headers: header });
+        // headers: {
+        //     'Authorization': `Bearer ${window.auth.getToken()}`,
+        //     'Content-Type': 'application/json'
+        // }
+        // });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -45,7 +53,7 @@ function buildPresenceTable(data) {
     // Criar cabeçalho
     let headerHTML = '<thead><tr><th>Nome</th>';
     weeks.forEach(week => {
-        headerHTML += (week === semanaAtuall ? '<th class="semana-atual">★</th>' : `<th>S${week}</th>`);
+        headerHTML += (week === semanaAtuall ? `<th class="semana-atual">S${week}★</th>` : `<th>S${week}</th>`);
     });
 
     headerHTML += '</tr></thead>';
@@ -62,7 +70,11 @@ function buildPresenceTable(data) {
             );
 
             var className = (presence && presence.present) ? 'presente' : 'ausente';
-            bodyHTML += (presence ? `<td><button class="presenca-btn  ${className}">✓</button></td>` : `<td><button class="presenca-btn ${className}"></button></td>`);
+
+            bodyHTML += `<td><button class="presenca-btn ${className}" data-person-id="${person.id}" data-week="${week}">`;
+            bodyHTML += (presence) ? '✓' : '';
+            bodyHTML += '</button></td>';
+            
         });
 
         bodyHTML += '</tr>';
@@ -70,7 +82,41 @@ function buildPresenceTable(data) {
     bodyHTML += '</tbody>';
 
     table.innerHTML = headerHTML + bodyHTML;
+
+    const obj = document.getElementsByClassName('presenca-btn');
+    const tds = [...obj];
+
+    tds.forEach(td => {
+        td.setAttribute('onclick', 'persistirPresenca(event)');
+    });
 }
+
+
+// Função que persiste alteração de uma presença na API
+async function persistirPresenca(evt) {
+    const btn = evt.target;
+    const personId = btn.getAttribute("data-person-id");
+    const week = btn.getAttribute("data-week");
+
+
+    console.log(`${personId}, ${week}`);
+
+
+
+
+    // await fetch(endpointPresencas, {
+    //     method: 'POST',
+    //     headers: header,
+
+    //     body: JSON.stringify({ key: chave, present: !!valor })
+    // }).then(response => {
+    //     if (!response.ok) {
+    //         showToast(`Não foi possível registrar a presença (Erro: ${response.status}).`, true);
+    //     }
+    // });
+}
+
+
 
 async function init() {
     const loadingDiv = document.getElementById('loading');
