@@ -61,3 +61,10 @@ class PresenceRead(PresenceCreate):
 
     model_config = ConfigDict(from_attributes=True)
 
+
+class PresenceUpdate(BaseModel):
+    """Schema para atualização de pessoa"""
+
+    owner_id: int
+    week: int
+    present: bool

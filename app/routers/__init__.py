@@ -3,6 +3,6 @@
 Pacote de routers da aplicação
 """
 
-from . import auth, people
+from . import auth, person
 
-__all__ = ["auth", "people", "presence"]
+__all__ = ["auth", "person", "presence"]

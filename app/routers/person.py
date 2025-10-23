@@ -11,7 +11,7 @@ from models import UserDB, PersonDB
 from schemas import PersonCreate, PersonRead, PersonUpdate
 from security import get_current_user
 
-router = APIRouter(prefix="/people", tags=["people"])
+router = APIRouter(prefix="/person", tags=["person"])
 
 
 @router.post("", response_model=PersonRead, status_code=201)
@@ -70,15 +70,7 @@ def get_person(
 ):
 
     dados = get_person(db, person_id, current_user)
-    
-    # person = (
-    #     db.query(PersonDB)
-    #     .filter(PersonDB.id == person_id, PersonDB.owner_id == current_user.id)
-    #     .first()
-    # )
-    # if not person:
-    #     raise HTTPException(status_code=404, detail="Person not found")
-    
+
     return dados
 
 
@@ -100,6 +92,7 @@ def update_person(
         person.name = person_in.name
     if person_in.phone is not None:
         person.phone = person_in.phone
+        
     db.commit()
     db.refresh(person)
     return person
@@ -123,14 +116,14 @@ def delete_person(
     db.commit()
     return None
 
-def get_person (db, person_id: int, current_user):
+
+def get_person(db, person_id: int, current_user):
     person = (
         db.query(PersonDB)
         .filter(PersonDB.id == person_id, PersonDB.owner_id == current_user.id)
         .first()
     )
-     
+
     if not person:
         raise HTTPException(status_code=404, detail="Person not found")
     return person
-    
