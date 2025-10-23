@@ -43,21 +43,22 @@ def list_presences(
     return dados
 
 
-@router.get("", response_model=None)
-def list_presences(
+@router.get("/{semana}", response_model=None)
+def list_presences(semana: int,
     current_user: UserDB = Depends(get_current_user), session: Session = Depends(get_db)
 ):
     """
-    Lista todas as pessoas presentes do usuário autenticado
+    Lista todas as pessoas presentes do usuário autenticado nas 4 semanas anteriores, mais a atual
 
     """
 
-    person = session.query(PersonDB).all()
-    presence = session.query(PresenceDB).all()
+    semana_start:int = semana -4
+    semana_start = 1 if semana < 0 else 48 if semana > 48 else semana_start
+
+    person = session.query(PersonDB).filter(PersonDB.owner_id == current_user.id).all()
+    presence = session.query(PresenceDB).filter(PresenceDB.week >= semana_start, PresenceDB.week <= semana, PresenceDB.owner_id == current_user.id).all()
 
     dados = {}
-
-    # dados.
 
     dados["person"] = person
     dados["presence"] = presence

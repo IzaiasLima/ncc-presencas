@@ -1,4 +1,4 @@
-const presenceURL = `${API_URL}/presence`
+// const presenceURL = `${API_URL}/presence`
 
 const header = {
     'Authorization': `Bearer ${window.auth.getToken()}`,
@@ -7,6 +7,11 @@ const header = {
 
 
 async function fetchData() {
+    var semana = document.getElementById('semanaAtual').value;
+    semana = (!!semana) ? semana : calcSemanaAtual();
+
+    const presenceURL = `${API_URL}/presence/${semana}`;
+
     try {
         const response = await fetch(presenceURL, { headers: header });
         // headers: {
@@ -27,16 +32,14 @@ async function fetchData() {
     }
 }
 
-const semanaAtual = calcSemanaAtual()
-
 function calcSemanaAtual() {
     var hoje = new Date();
     var inicioAno = new Date(hoje.getFullYear(), 0, 1);
     var diasPassados = Math.floor((hoje - inicioAno) / (24 * 60 * 60 * 1000));
     var semanaAtual = Math.ceil((diasPassados + inicioAno.getDay() + 1) / 7);
 
-    if (semanaAtual > 52) semanaAtual = 52;
-    if (semanaAtual < 1) semanaAtual = 1;
+    semanaAtual = (semanaAtual > 52) ? 52 : semanaAtual;
+    semanaAtual =  (semanaAtual < 1) ? 1 :  semanaAtual;
 
     return semanaAtual;
 }
@@ -74,7 +77,7 @@ function buildPresenceTable(data) {
             bodyHTML += `<td><button class="presenca-btn ${className}" data-person-id="${person.id}" data-week="${week}">`;
             bodyHTML += (presence) ? '✓' : '';
             bodyHTML += '</button></td>';
-            
+
         });
 
         bodyHTML += '</tr>';
@@ -117,11 +120,19 @@ async function persistirPresenca(evt) {
 }
 
 
+function setSemanaAtual() {
+    document.getElementById('semanaAtual').value = calcSemanaAtual();
+    init();
+}
+
 
 async function init() {
     const loadingDiv = document.getElementById('loading');
     const errorDiv = document.getElementById('error');
     const table = document.getElementById('presenceTable');
+    
+    console.log('REBUILDING...');
+    
 
     try {
         const data = await fetchData();
