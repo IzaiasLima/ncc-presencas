@@ -1,4 +1,6 @@
-const API_URL = 'http://localhost:8000';
+const API_URL = 'https://ncc-presencas.vercel.app';
+// const API_URL = 'http://localhost:8000';
+
 
 // Exibe mensagem tipo toast
 const toast = document.getElementById('toast');
