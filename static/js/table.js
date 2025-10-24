@@ -171,6 +171,8 @@ async function showPersonDialog(evt) {
     const personName = document.getElementById("dlg-name");
     const personPhone = document.getElementById("dlg-phone");
     const phoneLink = document.getElementById('dlg-phone-link');
+
+    console.log(personId);
     
     const person = await fetchDataPerson(personId);
 
@@ -182,9 +184,9 @@ async function showPersonDialog(evt) {
         personPhone.innerHTML = person.phone;
         phoneLink.innerHTML = `Telefone: ${person.phone}`;
         phoneLink.href = `https://wa.me/${person.phone}`;
+        dlg.classList.add('show');
     }
     
-    dlg.classList.add('show');
 }
 
 async function closePersonDialog() {
