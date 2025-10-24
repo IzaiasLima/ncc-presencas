@@ -1,19 +1,14 @@
-# main.py
-"""
-Aplicação principal FastAPI
-People CRUD with Simple Auth (FastAPI + SQLite)
-"""
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database import Base, engine
-from routers import auth, presence, person
+
 from config import CORS_ORIGINS
 
-# Criar tabelas do banco de dados
+from database import Base, engine
+from routers import auth, presence, person
+
 Base.metadata.create_all(bind=engine)
 
-# Inicializar aplicação FastAPI
+
 app = FastAPI(
     title="People CRUD with Simple Auth",
     description="API REST para gerenciamento de pessoas com autenticação JWT",
