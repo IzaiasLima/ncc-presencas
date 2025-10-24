@@ -1,5 +1,5 @@
 
-// Se logado, adiciona token ao cabeçalho da requisição
+// Adiciona token à requisição
 document.body.addEventListener('htmx:configRequest', function (evt) {
   if (window.auth.isLoggedIn()) {
     evt.detail.headers['Authorization'] = 'Bearer ' + window.auth.getToken();
@@ -45,41 +45,20 @@ function login() {
 
   handleLogin(username, password)
     .then(data => {
-      console.log('Login bem-sucedido!', data);
-
       window.auth.setToken(data.access_token, { persist: true });
       window.location.href = 'index.html';
-
       return true;
-
-      // showToast('Login bem-sucedido!');
-      // return requisitarDados(data.access_token);
     })
     .then(dados => {
-      console.log('Dados recebidos:', dados);
+      console.log('Dados do login recebidos');
     })
     .catch(error => {
       console.error('Erro:', error);
       showToast(`Não foi possível se autenticar no sistema.\n${error.message}.`, true);
-
     });
 }
 
 function logout() {
   window.auth.clearToken();
   window.location.href = 'login.html';
-  // showToast('Logout realizado com sucesso!');
-}
-
-// External, exemplo
-async function requisitarDados(token) {
-  const response = await fetch('http://localhost:8000/people', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  });
-
-  return response.json();
 }
