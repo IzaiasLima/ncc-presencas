@@ -1,11 +1,6 @@
 # config.py
 import os
 from dotenv import load_dotenv
-from pathlib import Path
-
-# Caminho para o arquivo .env um nível acima do script atual
-# env_path = Path('..') / '.env_exemplo'
-# load_dotenv(dotenv_path=env_path)
 
 load_dotenv() 
 

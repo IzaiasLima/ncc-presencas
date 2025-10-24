@@ -6,9 +6,9 @@ People CRUD with Simple Auth (FastAPI + SQLite)
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from config import CORS_ORIGINS
 from database import Base, engine
 from routers import auth, presence, person
+from config import CORS_ORIGINS
 
 # Criar tabelas do banco de dados
 Base.metadata.create_all(bind=engine)
