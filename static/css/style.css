@@ -1,9 +1,9 @@
 :root {
     ---primary-color: #2563eb;
     --bg-color: #fdfdfd;
-    --bg-dark-color1: #02091d;
-    --bg-dark-color2: #000000;
-    --text-color: #1f2937;
+    --bg-dark-color: rgb(0, 0, 0, 0.75);
+    --text-color: #010c1b;
+    --text-iverted-color: #fdfdfd;
     --border-radius: 8px;
 }
 
@@ -252,7 +252,7 @@ th {
 td {
     cursor: not-allowed;
 
-    &:has(.current-system-week){
+    &:has(.current-system-week) {
         cursor: pointer;
     }
 }
@@ -266,7 +266,7 @@ th:first-child {
     z-index: 10; */
 }
 
-td:first-child{
+td:first-child {
     cursor: pointer;
     pointer-events: all;
 }
@@ -286,10 +286,9 @@ a {
     cursor: pointer;
 }
 
-a.action {
+a:hover {
     cursor: pointer;
-    padding: 4px;
-    transition: color 0.2s;
+    transition: color 0.3s;
 
     &:hover {
         color: #14357d;
@@ -310,10 +309,10 @@ a.action {
     color: white;
     font-size: 2rem;
     font-weight: 600;
-    pointer-events:none;
-    
+    pointer-events: none;
+
     &.current-system-week {
-        pointer-events:all
+        pointer-events: all
     }
 
     @media (width <=768px) {
@@ -428,15 +427,17 @@ a.action {
     position: fixed;
     bottom: 20px;
     left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--bg-color);
-    color: var(--text-color);
     padding: 12px 24px;
-    border-radius: var(--border-radius);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--text-iverted-color);
+    background-color: var(--bg-color);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    pointer-events: none;
+    border-radius: var(--border-radius);
+    transform: translateX(-50%);
     transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+    opacity: 0;
     z-index: 1000;
 
     &.show {
@@ -454,36 +455,36 @@ a.action {
         display: none;
         width: 100vw;
         height: 100vh;
-        background: linear-gradient(160deg, var(--bg-dark-color1) 0%, var(--bg-dark-color2) 100%);
-        opacity: .98;
+        justify-content: center;
+        align-items: center;
+        background: var(--bg-dark-color);
         z-index: 1000;
 
         &.show {
             display: flex;
-            justify-content: center;
-            align-items: center;
         }
     }
 
     & article {
         width: 80%;
         max-width: 400px;
-        padding: 5px 10px;
+        padding: 0 5px 5px;
         background-color: var(--bg-color);
         border-radius: var(--border-radius);
-
+        background-color: #d3d3d3;
+        
         & header {
             justify-self: end;
             font-size: 2rem;
             color: var(--text-color);
             cursor: pointer;
         }
-
+        
         & .dlg-body {
             padding: 15px;
-            padding-top: 0;
             line-height: 1.5em;
             font-weight: 500;
+            border-radius: var(--border-radius);
         }
     }
 }

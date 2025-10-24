@@ -1,7 +1,3 @@
-const header = {
-    'Authorization': `Bearer ${window.auth.getToken()}`,
-    'Content-Type': 'application/json'
-}
 
 async function fetchDataPerson(personId) {
    if (!personId) return;
@@ -9,7 +5,7 @@ async function fetchDataPerson(personId) {
     const personURL = `${API_URL}/person/${personId}`;
 
     try {
-        const response = await fetch(personURL, { headers: header });
+        const response = await fetch(personURL, { headers: HEADERS });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -29,7 +25,7 @@ async function fetchDataWeek(week) {
     const presenceURL = `${API_URL}/presence/${week}`;
 
     try {
-        const response = await fetch(presenceURL, { headers: header });
+        const response = await fetch(presenceURL, { headers: HEADERS });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -37,6 +33,7 @@ async function fetchDataWeek(week) {
 
         const data = await response.json();
         return data;
+
     } catch (error) {
         console.error('Erro ao buscar dados das presenças:', error);
         throw error;
@@ -169,31 +166,24 @@ async function showPersonDialog(evt) {
     const personId = obj.getAttribute("data-person-id");
     const dlg = document.getElementById('person-details');
     const personName = document.getElementById("dlg-name");
-    const personPhone = document.getElementById("dlg-phone");
-    const phoneLink = document.getElementById('dlg-phone-link');
+    const phoneLink = document.getElementById('dlg-phone');
 
-    console.log(personId);
-    
     const person = await fetchDataPerson(personId);
-
-    console.log(person);
     
-
     if (person){
         personName.innerHTML = person.name;
-        personPhone.innerHTML = person.phone;
         phoneLink.innerHTML = `Telefone: ${person.phone}`;
         phoneLink.href = `https://wa.me/${person.phone}`;
         dlg.classList.add('show');
     }
-    
 }
 
 async function closePersonDialog() {
+    console.log("OOOKKKK");
+    
     const dlg = document.getElementById('person-details');
     dlg.classList.remove('show');
 }
-
 
 // Função que persiste alteração de uma presença na API
 async function updatePresence(evt) {
@@ -206,7 +196,7 @@ async function updatePresence(evt) {
 
     await fetch(presenceURL, {
         method: 'POST',
-        headers: header,
+        headers: HEADERS,
 
         body: JSON.stringify({ person_id: personId, week: week, present: !isPresent })
     }).then(response => {
@@ -231,7 +221,7 @@ async function addPerson() {
 
         await fetch(personURL, {
             method: 'POST',
-            headers: header,
+            headers: HEADERS,
             body: JSON.stringify({ name: name, phone: phone })
         }).then(response => {
             if (!response.ok) {
@@ -272,7 +262,7 @@ async function rebuild() {
 
         loadingDiv.style.display = 'none';
 
-        showToast(`Deu ruin! ${error}`, true)
+        showToast(`Erro! Não foi possível exibir os dados! ${error}`, true)
     }
 }
 

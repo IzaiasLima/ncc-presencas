@@ -37,7 +37,7 @@ app.mount("/p", StaticFiles(directory="static", html="True"), name="static")
 
 @app.get("/", response_class=RedirectResponse)
 def root():
-    return "/p/login.html"
+    return "/p/pages/login.html"
 
 
 def main():

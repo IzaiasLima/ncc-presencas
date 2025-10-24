@@ -1,4 +1,3 @@
-
 // Adiciona token à requisição
 document.body.addEventListener('htmx:configRequest', function (evt) {
   if (window.auth.isLoggedIn()) {
