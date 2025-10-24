@@ -6,10 +6,11 @@ Rotas CRUD para gerenciamento de pessoas
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from database import get_db
-from models import UserDB, PersonDB
-from schemas import PersonCreate, PersonRead, PersonUpdate
-from security import get_current_user
+
+from app.database import get_db
+from app.models import UserDB, PersonDB
+from app.schemas import PersonCreate, PersonRead, PersonUpdate
+from app.security import get_current_user
 
 router = APIRouter(prefix="/person", tags=["person"])
 
