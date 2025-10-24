@@ -6,10 +6,10 @@ Rotas de autenticação: registro e login
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from database import get_db
-from models import UserDB
-from schemas import UserCreate, Token
-from security import get_password_hash, verify_password, create_access_token
+from app.database import get_db
+from app.models import UserDB
+from app.schemas import UserCreate, Token
+from app.security import get_password_hash, verify_password, create_access_token
 
 router = APIRouter(tags=["authentication"])
 
