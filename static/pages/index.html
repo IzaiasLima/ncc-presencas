@@ -46,25 +46,26 @@
             <dialog id="person-details" class="dialog">
                 <article class="article">
                     <header>
-                        <span onclick="closePersonDialog()" >×</span>
+                        <span onclick="closePersonDialog()">×</span>
                     </header>
 
                     <div class="dlg-body">
                         <!-- dados do participante -->
-                         <p>Nome: <span>Izaias Lima</span></p>
-                         <p>Telefone: <span>6198181-3390</span></p>
+                        <p>Nome: <span id="dlg-name">Izaias Lima</span></p>
+                        <a id="dlg-phone-link" href="" target="_blank" rel="nofollow noopener noreferrer">
+                            <span id="dlg-phone">9999-9999</span>
+                        </a>
                     </div>
                 </article>
             </dialog>
 
-            <div id="loading" style="text-align: center; padding: 20px; color: #666;">
-                Carregando dados...
+            <div id="loading">
+                <img src="/static/icons/spinner.svg" alt="loadding">
             </div>
             <div id="has-no-data">
                 Não há dados na semana selecionada nem nas semanas adjacentes.
             </div>
             <table id="presence-table" style="display: none;"></table>
-
 
             <div id="toast">
                 <span id="message">

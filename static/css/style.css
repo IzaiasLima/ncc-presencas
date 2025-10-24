@@ -280,6 +280,12 @@ tbody tr:hover {
     background: #f9fafb;
 }
 
+a {
+    color: var(--text-color);
+    text-decoration: none;
+    cursor: pointer;
+}
+
 a.action {
     cursor: pointer;
     padding: 4px;
@@ -392,6 +398,19 @@ a.action {
 
 .instructions li {
     margin-bottom: 6px;
+}
+
+#loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* max-width: 500px; */
+    /* background-color: #cfcfcf; */
+
+    & img {
+        width: 64px;
+        height: 64px;
+    }
 }
 
 #has-no-data {

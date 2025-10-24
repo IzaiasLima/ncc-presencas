@@ -3,7 +3,27 @@ const header = {
     'Content-Type': 'application/json'
 }
 
-async function fetchData(week) {
+async function fetchDataPerson(personId) {
+   if (!personId) return;
+
+    const personURL = `${API_URL}/person/${personId}`;
+
+    try {
+        const response = await fetch(personURL, { headers: header });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Erro ao buscar dados do participante:', error);
+        throw error;
+    }
+}
+
+async function fetchDataWeek(week) {
     week = (!!week) ? week : 1;
 
     const presenceURL = `${API_URL}/presence/${week}`;
@@ -18,7 +38,7 @@ async function fetchData(week) {
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('Erro ao buscar dados:', error);
+        console.error('Erro ao buscar dados das presenças:', error);
         throw error;
     }
 }
@@ -99,7 +119,7 @@ function buildPresenceTable(data) {
 
             tot += 1;
 
-            var className = (presence && presence.present) ? 'present' : 'absent';
+            const className = (presence && presence.present) ? 'present' : 'absent';
 
             bodyHTML += `<td><button class="presence-btn ${className} ${(week === currentWeek ? 'current-system-week' : '')}" data-person-id="${person.id}" data-week="${week}">`;
 
@@ -108,10 +128,6 @@ function buildPresenceTable(data) {
         });
 
         bodyHTML += '</tr>';
-
-        // Criar diálogo modal com detalhes do participante
-
-
     });
 
     bodyHTML += '</tbody>';
@@ -146,15 +162,29 @@ function buildPresenceTable(data) {
     }
 
     table.appendChild(total);
-
 }
 
 async function showPersonDialog(evt) {
     const obj = evt.target;
     const personId = obj.getAttribute("data-person-id");
     const dlg = document.getElementById('person-details');
+    const personName = document.getElementById("dlg-name");
+    const personPhone = document.getElementById("dlg-phone");
+    const phoneLink = document.getElementById('dlg-phone-link');
+    
+    const person = await fetchDataPerson(personId);
+
+    console.log(person);
+    
+
+    if (person){
+        personName.innerHTML = person.name;
+        personPhone.innerHTML = person.phone;
+        phoneLink.innerHTML = `Telefone: ${person.phone}`;
+        phoneLink.href = `https://wa.me/${person.phone}`;
+    }
+    
     dlg.classList.add('show');
-    console.log(`Person: ${personId}`);
 }
 
 async function closePersonDialog() {
@@ -230,7 +260,7 @@ async function rebuild() {
     selectedWeek = calcAdjustedWeek(selectedWeek);
 
     try {
-        const data = await fetchData(selectedWeek);
+        const data = await fetchDataWeek(selectedWeek);
 
         loadingDiv.style.display = 'none';
         table.style.display = 'table';
