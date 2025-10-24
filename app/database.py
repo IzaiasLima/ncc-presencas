@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
-from config import DATABASE_URL, AUTH_TOKEN
+from .config import DATABASE_URL, AUTH_TOKEN
 
 
 # engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})

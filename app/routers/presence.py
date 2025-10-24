@@ -1,11 +1,11 @@
 from typing import Any, List
 from fastapi import APIRouter, Depends, HTTPException
-
 from sqlalchemy.orm import Session
-from models import PersonDB, PresenceDB, UserDB
-from schemas import PresenceCreate, PresenceRead, PresenceUpdate
-from security import get_current_user
-from database import get_db
+
+from .models import PersonDB, PresenceDB, UserDB
+from .schemas import PresenceCreate, PresenceRead, PresenceUpdate
+from .security import get_current_user
+from .database import get_db
 
 
 router = APIRouter(prefix="/presence", tags=["presence"])
