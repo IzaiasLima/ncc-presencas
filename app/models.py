@@ -6,7 +6,7 @@ Modelos de banco de dados SQLAlchemy
 from datetime import datetime
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Boolean
 from sqlalchemy.orm import relationship
-from .database import Base
+from database import Base
 
 
 class UserDB(Base):
