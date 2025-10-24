@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from config import CORS_ORIGINS
+# from app.config import CORS_RIGINS
 
-from database import Base, engine
-from routers import auth, presence, person
+from app.database import Base, engine
+from app.routers import auth, presence, person
 
 Base.metadata.create_all(bind=engine)
 
@@ -18,7 +18,7 @@ app = FastAPI(
 # Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=CORS_ORIGINS,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
