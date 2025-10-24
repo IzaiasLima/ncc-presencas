@@ -1,5 +1,7 @@
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from config import CORS_ORIGINS
 
@@ -10,8 +12,8 @@ Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI(
-    title="People CRUD with Simple Auth",
-    description="API REST para gerenciamento de pessoas com autenticação JWT",
+    title="People Simple API with Auth JWT",
+    description="API REST para registrar a presença de pessoas no NCC",
     version="1.0.0",
 )
 
@@ -30,10 +32,12 @@ app.include_router(person.router)
 app.include_router(presence.router)
 
 
-@app.get("/")
+app.mount("/p", StaticFiles(directory="static", html="True"), name="static")
+
+
+@app.get("/", response_class=RedirectResponse)
 def root():
-    """Endpoint raiz"""
-    return {"message": "People CRUD API", "docs": "/docs", "redoc": "/redoc"}
+    return "/p/login.html"
 
 
 def main():
