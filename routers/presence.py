@@ -1,9 +1,8 @@
-from typing import Any, List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from models import PersonDB, PresenceDB, UserDB
-from schemas import PresenceCreate, PresenceRead, PresenceUpdate
+from schemas import PresenceCreate, PresenceRead
 from security import get_current_user
 from database import get_db
 
@@ -52,7 +51,12 @@ def list_presences(
     semana_start: int = semana - 4
     semana_start = 1 if semana < 0 else 48 if semana > 48 else semana_start
 
-    person = session.query(PersonDB).filter(PersonDB.owner_id == current_user.id).all()
+    person = (
+        session.query(PersonDB)
+        .filter(PersonDB.owner_id == current_user.id)
+        .order_by(PersonDB.name)
+        .all()
+    )
     presence = (
         session.query(PresenceDB)
         .filter(
