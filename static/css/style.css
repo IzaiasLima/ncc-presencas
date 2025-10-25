@@ -309,7 +309,7 @@ a:hover {
     color: white;
     font-size: 2rem;
     font-weight: 600;
-    pointer-events: none;
+    /* pointer-events: none; */
 
     &.current-system-week {
         pointer-events: all
@@ -403,8 +403,6 @@ a:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* max-width: 500px; */
-    /* background-color: #cfcfcf; */
 
     & img {
         width: 64px;
@@ -468,7 +466,7 @@ a:hover {
     & article {
         width: 80%;
         max-width: 400px;
-        padding: 0 5px 5px;
+        padding: 0 7px 7px;
         background-color: var(--bg-color);
         border-radius: var(--border-radius);
         background-color: #d3d3d3;
