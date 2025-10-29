@@ -1,6 +1,6 @@
 
 async function fetchDataPerson(personId) {
-   if (!personId) return;
+    if (!personId) return;
 
     const personURL = `${API_URL}/person/${personId}`;
 
@@ -47,6 +47,7 @@ function calcCurrentWeek() {
     var atualWeek = Math.ceil((daysToday + beginYear.getDay() + 1) / 7);
 
     atualWeek = calcAdjustedWeek(atualWeek)
+    atualWeek = Math.max(1, Math.min(53, atualWeek));
 
     return atualWeek;
 }
@@ -95,12 +96,12 @@ function buildPresenceTable(data) {
     // Criar corpo da tabela
     let bodyHTML = '<tbody>';
 
-    
+
     data.person.forEach(person => {
         bodyHTML += `<tr><td class="person-name" data-person-id="${person.id}">${person.name}</td>`;
-        
+
         var tot = 0;
-        
+
         weeks.forEach(week => {
 
             // Buscar presença para esta pessoa nesta semana
@@ -111,14 +112,14 @@ function buildPresenceTable(data) {
             // Totaliza por semana
             if (presence && presence.present) {
                 const v = (!!totalSum[tot]) ? totalSum[tot] : 0;
-                totalSum[tot] =  v + 1;
+                totalSum[tot] = v + 1;
             }
 
             tot += 1;
 
             const className = (presence && presence.present) ? 'present' : 'absent';
 
-            bodyHTML += `<td><button class="presence-btn ${className} ${(week === currentWeek ? 'current-system-week' : '')}" data-person-id="${person.id}" data-week="${week}">`;
+            bodyHTML += `<td><button class="presence ${className} ${(week === currentWeek ? 'current-system-week' : '')}" data-person-id="${person.id}" data-week="${week}">`;
 
             bodyHTML += (presence) ? '✓' : '';
             bodyHTML += '</button></td>';
@@ -137,7 +138,7 @@ function buildPresenceTable(data) {
         td.setAttribute('onclick', 'showPersonDialog(event)');
     });
 
-    const btn = document.getElementsByClassName('presence-btn');
+    const btn = document.getElementsByClassName('presence');
     [...btn].forEach(td => {
         td.setAttribute('onclick', 'updatePresence(event)');
     });
@@ -169,8 +170,8 @@ async function showPersonDialog(evt) {
     const phoneLink = document.getElementById('dlg-phone');
 
     const person = await fetchDataPerson(personId);
-    
-    if (person){
+
+    if (person) {
         personName.innerHTML = person.name;
         phoneLink.innerHTML = `Telefone: ${person.phone}`;
         phoneLink.href = `https://wa.me/${person.phone}`;
@@ -180,7 +181,7 @@ async function showPersonDialog(evt) {
 
 async function closePersonDialog() {
     console.log("OOOKKKK");
-    
+
     const dlg = document.getElementById('person-details');
     dlg.classList.remove('show');
 }
@@ -234,7 +235,6 @@ async function addPerson() {
         rebuild();
     }
 }
-
 
 function setCurrentWeek() {
     document.getElementById('current-week').value = calcCurrentWeek();

@@ -1,9 +1,11 @@
 :root {
     ---primary-color: #2563eb;
     --bg-color: #fdfdfd;
+    --bg-dlg-color: #d3d3d3;
     --bg-dark-color: rgb(0, 0, 0, 0.75);
     --text-color: #010c1b;
     --text-iverted-color: #fdfdfd;
+    --presence-color: #16a34a;
     --border-radius: 8px;
 }
 
@@ -119,7 +121,7 @@ h1 {
     }
 
     & .success {
-        background-color: #16a34a;
+        background-color: var(--presence-color);
         color: white;
     }
 
@@ -250,10 +252,37 @@ th {
 }
 
 td {
-    cursor: not-allowed;
+    cursor: default;
+    pointer-events: none;
 
-    &:has(.current-system-week) {
+    /* &.alterable {
         cursor: pointer;
+        pointer-events: all;
+    }
+
+    &.current-week {
+        cursor: pointer;
+        pointer-events: all
+    } */
+
+    & .summary {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        font-weight: 400;
+        font-size: 1rem;
+        gap: 10px;
+
+        @media (width <=768px) {
+            flex-direction: column;
+        }
+    }
+
+    &.alterable,
+    &:has(.current-week) {
+        /* cursor: pointer; */
+        pointer-events: all
     }
 }
 
@@ -295,12 +324,11 @@ a:hover {
     }
 }
 
-.presence-btn {
+.presence {
     width: 32px;
     height: 32px;
     border: none;
     border-radius: var(--border-radius);
-    cursor: pointer;
     transition: all 0.2s;
     display: flex;
     align-items: center;
@@ -309,9 +337,17 @@ a:hover {
     color: white;
     font-size: 2rem;
     font-weight: 600;
-    /* pointer-events: none; */
 
-    &.current-system-week {
+    /* cursor: not-allowed;
+    pointer-events: none;
+
+    &.alterable {
+        cursor: pointer;
+        pointer-events: all;
+    } */
+
+    &.current-week {
+        cursor: pointer;
         pointer-events: all
     }
 
@@ -319,54 +355,31 @@ a:hover {
         width: 28px;
         height: 28px;
     }
-}
 
-.presence-btn.present {
-    background: #16a34a;
-    color: white;
-}
+    &.present {
+        font-weight: 100;
+        background: var(--presence-color);
+        color: white;
+    }
 
-.presence-btn.absent {
-    background: #e5e7eb;
-}
-
-.presence-btn:hover {
-    transform: scale(1.1);
-}
-
-/* .remove-btn {
-    background: none;
-    border: none;
-    color: #dc2626;
-    cursor: pointer;
-    padding: 4px;
-    font-size: 1.45rem;
-    transition: color 0.2s;
+    &.absent {
+        background: #e5e7eb;
+    }
 
     &:hover {
-        color: #991b1b;
+        transform: scale(1.1);
     }
 }
-
-.btn-actions {
-    background: none;
-    border: none;
-    color: #2563eb;
-    cursor: pointer;
-    padding: 4px;
-    font-size: 1.45rem;
-    transition: color 0.2s;
-
-    &:hover {
-        color: #14357d;
-    }
-} */
 
 .total-cell {
     background: #eff6ff;
-    font-weight: bold;
-    color: #2563eb;
+    font-weight: 500;
+    font-size: 1.1rem;
     text-align: center;
+
+    & .total-present {
+        color: var(--presence-color);
+    }
 }
 
 .empty-state {
@@ -400,9 +413,14 @@ a:hover {
 }
 
 #loading {
+    position: fixed;
     display: flex;
+    width: 10vw;
+    height: 10vh;
+    align-self: center;
+    justify-self: center;
     justify-content: center;
-    align-items: center;
+    z-index: 1000;
 
     & img {
         width: 64px;
@@ -410,7 +428,19 @@ a:hover {
     }
 }
 
-#has-no-data {
+.htmx-indicator {
+    display: none;
+}
+
+.htmx-request .htmx-indicator {
+    display: inline;
+}
+
+.htmx-request.htmx-indicator {
+    display: inline;
+}
+
+/* #has-no-data {
     display: none;
     text-align: center;
     padding: 20px;
@@ -419,7 +449,7 @@ a:hover {
     &.show {
         display: block;
     }
-}
+} */
 
 #toast {
     position: fixed;
@@ -459,6 +489,8 @@ a:hover {
         z-index: 1000;
 
         &.show {
+            position: fixed;
+            /* overflow: hidden; */
             display: flex;
         }
     }
@@ -469,19 +501,21 @@ a:hover {
         padding: 0 7px 7px;
         background-color: var(--bg-color);
         border-radius: var(--border-radius);
-        background-color: #d3d3d3;
-        
+        background-color: var(--bg-dlg-color);
+        /* background-color: #d3d3d3; */
+
         & header {
             justify-self: end;
             font-size: 2rem;
             color: var(--text-color);
             cursor: pointer;
         }
-        
+
         & .dlg-body {
             padding: 15px;
             line-height: 1.5em;
             font-weight: 500;
+            background-color: var(--bg-dlg-color);
             border-radius: var(--border-radius);
         }
     }

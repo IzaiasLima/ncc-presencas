@@ -1,10 +1,13 @@
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from models import PersonDB, PresenceDB, UserDB
-from schemas import PresenceCreate, PresenceRead
+from schemas import PresenceCreate, PresenceMatrix, PresenceRead
 from security import get_current_user
 from database import get_db
+from utils import current_week, presence_matrix
 
 
 router = APIRouter(prefix="/presence", tags=["presence"])
@@ -51,32 +54,84 @@ def list_presences(
     semana_start: int = semana - 4
     semana_start = 1 if semana < 0 else 48 if semana > 48 else semana_start
 
-    person = (
+    persons = (
         session.query(PersonDB)
         .filter(PersonDB.owner_id == current_user.id)
         .order_by(PersonDB.name)
         .all()
     )
-    presence = (
+    presences = (
         session.query(PresenceDB)
         .filter(
             PresenceDB.week >= semana_start,
             PresenceDB.week <= semana,
             PresenceDB.owner_id == current_user.id,
+            PresenceDB.present,
         )
         .all()
     )
 
     dados = {}
 
-    dados["person"] = person
-    dados["presence"] = presence
+    dados["person"] = persons
+    dados["presence"] = presences
+
+    # dados = presence_matrix(persons, presences)
+
+    return dados
+
+
+# @router.get("/{semana}", response_model=PresenceMatrix)
+@router.get("/matrix/{week}/{numWeeks}", response_model=None)
+def list_presences(
+    week: int,
+    numWeeks: int,
+    current_user: UserDB = Depends(get_current_user),
+    session: Session = Depends(get_db),
+):
+    """
+    Lista todas as pessoas presentes do usuário autenticado nas 4 semanas anteriores, mais a atual
+
+    """
+
+    numWeeks = max(3, min(numWeeks, 6))
+    interval = (numWeeks - 1) if week < numWeeks else -(numWeeks - 1)
+    week = current_week() if week == 0 else week
+    week_limit = week + interval
+
+    if week > week_limit:
+        week_limit, week = week, week_limit
+
+    weeks = [x for x in range(week, week_limit + 1)]
+
+    persons = (
+        session.query(PersonDB)
+        .filter(PersonDB.owner_id == current_user.id)
+        .order_by(PersonDB.name)
+        .all()
+    )
+    presences = (
+        session.query(PresenceDB)
+        .filter(
+            PresenceDB.week >= week,
+            PresenceDB.week <= week_limit,
+            PresenceDB.owner_id == current_user.id,
+            PresenceDB.present,
+        )
+        .all()
+    )
+
+    # dados = {}
+
+    # dados["person"] = persons
+    # dados["presence"] = presences
+
+    dados = presence_matrix(persons, presences, weeks)
 
     return dados
 
 
 def get_presence(session: Session, presence: PresenceCreate):
-
     dados = (
         session.query(PresenceDB)
         .filter(

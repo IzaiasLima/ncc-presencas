@@ -54,7 +54,6 @@ def list_people(
     Lista todas as pessoas do usuário autenticado
     """
     dados = db.query(PersonDB).filter(PersonDB.owner_id == current_user.id).all()
-    print(dados)
     return dados
 
 
@@ -88,7 +87,7 @@ def update_person(
         person.name = person_in.name
     if person_in.phone is not None:
         person.phone = person_in.phone
-        
+
     db.commit()
     db.refresh(person)
     return person

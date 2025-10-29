@@ -1,13 +1,65 @@
-const API_URL = 'https://ncc-presencas.vercel.app';
-// const API_URL = 'http://localhost:8000';
+const isLocalhost = Boolean(
+    window.location.hostname === 'localhost' ||
+    window.location.hostname.match(
+        /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
+);
+
+const API_URL_LOCAL = 'http://localhost:8000';
+const API_URL_VERCEL = 'https://ncc-presencas.vercel.app';
+const API_URL = (isLocalhost) ? API_URL_LOCAL : API_URL_VERCEL;
 
 const HEADERS = {
-    'Authorization': `Bearer ${window.auth.getToken()}`,
-    'Content-Type': 'application/json'
+    'Authorization': `Bearer ${window.auth.getToken()}`, 'Content-Type': 'application/json'
 }
 
-// Exibe mensagem tipo toast
-function showToast(message, err = false, duration = 4000) {
+function rebuild() {
+    const isMobile = window.innerWidth <= 580;
+    const numWeeks = isMobile ? 3 : 6;
+
+    var weekElm = document.getElementById('current-week');
+    week = (weekElm.value) ? weekElm.value : calcCurrentWeek();
+    week = Math.max(1, Math.min(53, week));
+    weekElm.value = week;
+
+    htmx.ajax('GET', `/presence/matrix/${week}/${numWeeks}`, {
+        handler: function (element, responseInfo) {
+            const dados = JSON.parse(responseInfo.xhr.responseText);
+            const template = document.getElementById('presences-matrix').innerHTML;
+            const result = document.getElementById('result');
+
+            if (dados.stats.totalPresent === 0) {
+                showToast(`Não há dados na semana ${week}, nem nas próximas.`, true);
+            }
+            result.innerHTML = Mustache.render(template, dados);
+        }
+    });
+}
+
+// Função que persiste alteração de uma presença na API
+async function updatePresence(evt) {
+    const btn = evt.target;
+    const personId = btn.getAttribute("data-person-id");
+    const week = btn.getAttribute("data-week");
+    const isPresent = btn.classList.contains('present');
+
+    const presenceURL = `${API_URL}/presence`;
+
+    await fetch(presenceURL, {
+        method: 'POST',
+        headers: HEADERS,
+
+        body: JSON.stringify({ person_id: personId, week: week, present: !isPresent })
+    }).then(response => {
+        if (!response.ok) {
+            showToast(`Não foi possível registrar a presença (Erro: ${response.status}).`, true);
+        }
+    });
+
+    rebuild();
+}
+
+// Exibe mensagem tipo TOAST
+function showToast(message, err = false, duration = 5000) {
     const toast = document.getElementById('toast');
 
     toast.classList.add('show');
@@ -23,3 +75,76 @@ function showToast(message, err = false, duration = 4000) {
         toast.classList.remove('show');
     }, duration);
 }
+
+// detecta click repetido em h2Title
+const btnPresence = document.getElementsByClassName('presence');
+const h2Title = document.getElementById('h2-title');
+var h2TitleClick = 0;
+
+h2Title.addEventListener('click', (event) => {
+    if (event.ctrlKey) {
+        h2TitleClick += 1;
+
+        if (h2TitleClick > 7) {
+            [...btnPresence].forEach(btn => {
+                btn.classList.add('alterable');
+            });
+        }
+    }
+
+    if (event.shiftKey) {
+        h2TitleClick = 0;
+        [...btnPresence].forEach(btn => {
+            btn.classList.remove('alterable');
+        });
+    }
+});
+
+// show dialog
+async function showPersonDialog(evt) {
+    const obj = evt.target;
+    const personId = obj.getAttribute("data-person-id");
+    const dlg = document.getElementById('person-details');
+    const personName = document.getElementById("dlg-name");
+    const phoneLink = document.getElementById('dlg-phone');
+
+    // const person = await fetchDataPerson(personId);
+    const person = {
+        "name": "Izaias Lima",
+        "phone": "(61) 98181-3390"
+    }
+
+    if (person) {
+        personName.innerHTML = person.name;
+        phoneLink.innerHTML = `Telefone: ${person.phone}`;
+        phoneLink.href = `https://wa.me/${person.phone}`;
+        dlg.classList.add('show');
+    }
+}
+
+// close dialog
+async function closePersonDialog() {
+    console.log("OOOKKKK");
+
+    const dlg = document.getElementById('person-details');
+    dlg.classList.remove('show');
+}
+
+// calcula semana atual
+function calcCurrentWeek() {
+    var today = new Date();
+    var beginYear = new Date(today.getFullYear(), 0, 1);
+    var daysToday = Math.floor((today - beginYear) / (24 * 60 * 60 * 1000));
+    var atualWeek = Math.ceil((daysToday + beginYear.getDay() + 1) / 7);
+
+    return Math.max(1, Math.min(53, atualWeek));
+}
+
+// seta semana atual no input
+function setCurrentWeek() {
+    const elm = document.getElementById('current-week');
+    elm.value = calcCurrentWeek();
+    rebuild();
+}
+
+window.onload = () => rebuild();

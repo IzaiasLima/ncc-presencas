@@ -68,3 +68,25 @@ class PresenceUpdate(BaseModel):
     owner_id: int
     week: int
     present: bool
+
+
+class WeekData(BaseModel):
+    """Schema for week attendance data"""
+
+    week: int
+    # hasData: bool
+    present: bool
+
+
+class MatrixRow(BaseModel):
+    """Schema for a row in the presence matrix"""
+
+    name: str
+    weekData: List[WeekData]
+
+
+class PresenceMatrix(BaseModel):
+    """Schema for the complete presence matrix"""
+
+    weeks: List[int]
+    rows: List[MatrixRow]

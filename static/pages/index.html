@@ -1,69 +1,154 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/style.css">
-    <title>Tabela de Presença</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<body>
-    <div class="container">
-        <div class="card">
-            <div class="header">
-                <h1>Frequência Semanal do NCC</h1>
-                <img class="login" src="../images/exit.png" onclick="event.preventDefault(); logout();" alt="exit">
-            </div>
+        <script src="../js/htmx.min.js"></script>
+        <script src="../js/client-side-templates.min.js"></script>
+        <script src="../js/mustache.min.js"></script>
 
-            <div class="input-group">
-                <input type="text" id="new-person" placeholder="Nome do participante">
-                <input type="text" id="new-person-phone" placeholder="Telefone">
-                <button class="btn primary" onclick="addPerson()">
-                    <span>
-                        <img class="login" src="../images/plus.png">
-                    </span>
-                    <span class="btn-label">
-                        Adicionar
-                    </span>
-                </button>
-            </div>
+        <link rel="stylesheet" href="../css/style.css">
+        <title>Tabela de Presença</title>
+    </head>
 
-            <div class="navigation">
-                <div class="weeks">
-                    <div>
-                        <label>Semana:</label>
-                        <input type="number" id="current-week" min="1" max="52" onchange="rebuild()">
-                        <div class="btns-weeks">
-                            <button class="btn primary" onclick="rebuild()">Seleciona Semana</button>
-                            <button class="btn primary" onclick="setCurrentWeek()">Semana Atual</button>
+    <body>
+        <div class="container">
+            <div class="card">
+                <div class="header">
+                    <h1>Frequência Semanal do NCC</h1>
+                    <img class="login" src="../images/exit.png" onclick="event.preventDefault(); logout();" alt="exit">
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="new-person" placeholder="Nome do participante">
+                    <input type="text" id="new-person-phone" placeholder="Telefone">
+                    <button class="btn primary" onclick="addPerson()">
+                        <span>
+                            <img class="login" src="../images/plus.png">
+                        </span>
+                        <span class="btn-label">
+                            Adicionar
+                        </span>
+                    </button>
+                </div>
+
+                <div class="navigation">
+                    <div class="weeks">
+                        <div>
+                            <label>Semana:</label>
+                            <input type="number" id="current-week" min="1" max="53" onchange="rebuild()">
+                            <div class="btns-weeks">
+                                <button class="btn primary" onclick="rebuild()">Seleciona Semana</button>
+                                <button class="btn primary" onclick="setCurrentWeek()">Semana Atual</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
+                <dialog id="person-details" class="dialog">
+                    <article class="article">
+                        <header>
+                            <span onclick="closePersonDialog()">×</span>
+                        </header>
 
-            <dialog id="person-details" class="dialog">
-                <article class="article">
-                    <header>
-                        <span onclick="closePersonDialog()">×</span>
-                    </header>
+                        <div class="dlg-body" style="background-color: aliceblue;">
+                            <!-- dados do participante -->
+                            <p>Nome: <span id="dlg-name">Izaias Lima</span></p>
+                            <a id="dlg-phone" href="" target="_blank" rel="nofollow noopener noreferrer"></a>
+                        </div>
+                    </article>
+                </dialog>
 
-                    <div class="dlg-body" style="background-color: aliceblue;">
-                        <!-- dados do participante -->
-                        <p>Nome: <span id="dlg-name">Izaias Lima</span></p>
-                        <a id="dlg-phone" href="" target="_blank" rel="nofollow noopener noreferrer"></a>
+                <div id="loading">
+                    <img class="htmx-indicator" src="../icons/spinner.svg" alt="loadding">
+                </div>
+
+                <div hx-ext="client-side-templates">
+                    <!-- <div id="api-call" hx-get="/presence/matrix/0" hx-trigger="load" hx-indicator="#loading"
+                        mustache-template="presences-matrix">
+                    </div> -->
+
+                    <div id="result">
+                        <!-- Os dados vão ser exibidos aqui. -->
                     </div>
-                </article>
-            </dialog>
 
-            <div id="loading">
-                <img src="../icons/spinner.svg" alt="loadding">
+                    <template id="presences-matrix">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <!-- {{#heads}} -->
+                                    <th id="S{{.}}">{{.}}</th>
+                                    <!-- {{/heads}} -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- {{#rows}} -->
+                                <tr>
+                                    <td class="person-name" data-person-id="{{person.id}}"
+                                        onclick="showPersonDialog(event)">{{name}}</td>
+                                    <!-- {{#weekData}} -->
+                                    <td class="">
+                                        {{#present}}
+                                            <button
+                                                class="presence present {{#current_week}}current-week{{/current_week}}"
+                                                data-person-id="{{ person_id}}" data-week="{{ week }}"
+                                                onclick="updatePresence(event)">✓</button>
+                                        {{/present}}
+                                        {{^present}}
+                                            <button
+                                                class="presence absent {{#current_week}}current-week{{/current_week}}"
+                                                data-person-id="{{ person_id}}" data-week="{{ week }}"
+                                                onclick="updatePresence(event)">&nbsp;</button>
+                                        {{/present}}
+                                    </td>
+                                    <!-- {{/weekData}} -->
+                                </tr>
+                                <!-- {{/rows}} -->
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-cell">
+                                    <td class="total-cell">Total</td>
+                                    <!-- {{#weekTotals}} -->
+                                    <td>
+                                        <div class="total-present">✔ {{present}}</div>
+                                        <div><small>{{percent}}%</small></div>
+                                    </td>
+                                    <!-- {{/weekTotals}} -->
+                                </tr>
+                                <tr>
+                                    <td class="summary">Resumo</td>
+                                    <td colspan="{{weeks.length}}">
+                                        <div class="summary">
+                                            <div class="light">
+                                                Participantes: {{stats.totalPersons}}
+                                            </div>
+                                            <div>
+                                                Presenças: {{stats.totalPresent}}
+                                            </div>
+                                            <div class="light">
+                                                Ausências: {{stats.totalAbsent}}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </template>
+                </div>
             </div>
-            <div id="has-no-data">
-                Não há dados na semana selecionada nem nas semanas adjacentes.
-            </div>
-            <table id="presence-table" style="display: none;"></table>
+
+            <!-- <table id="presence-table" style="display: table;">
+                        <tbody>
+                            <tr>
+                                <td class="person-name" data-person-id="16" onclick="showPersonDialog(event)">Antônia
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table> -->
 
             <div id="toast">
                 <span id="message">
@@ -72,34 +157,31 @@
             </div>
 
             <div id="empty-state" style="display: none;">
-                Adicione participantes para começar o controle de frequência
+                Adicione participantes para começar o acompanhamento da frequência.
+            </div>
+
+            <div class="instructions">
+                <h2 id="h2-title">Instruções:</h2>
+                <ul>
+                    <li>• Adicione participantes usando o campo acima</li>
+                    <li>• Clique nas células para marcar presença (verde) ou ausência (cinza)</li>
+                    <li>• Use "Selecionar semana" para navegar pelas 52 semanas</li>
+                    <li>• Apenas a semana atual (destacada com ★) pode ser editada</li>
+                    <li>• A linha "Total" mostra a soma de participantes presentes em cada semana</li>
+                </ul>
             </div>
         </div>
 
-        <div class="instructions">
-            <h2>Instruções:</h2>
-            <ul>
-                <li>• Adicione participantes usando o campo acima</li>
-                <li>• Clique nas células para marcar presença (verde) ou ausência (cinza)</li>
-                <li>• Use "Selecionar semana" para navegar pelas 52 semanas</li>
-                <li>• Apenas a semana atual (destacada com ★) pode ser editada</li>
-                <li>• A linha "Total" mostra a soma de participantes presentes em cada semana</li>
-            </ul>
-        </div>
-    </div>
-
-    <script src="../js/auth.js"></script>
-    <script>
-        // Verifica autenticação antes de executar o script principal
-        if (window.auth) {
-            window.auth.requireLogin();
-        }
-    </script>
-    <script src="../js/main.js"></script>
-    <script src="../js/login.js"></script>
-    <script src="../js/table.js"></script>
-
-
-</body>
+        <script src="../js/auth.js"></script>
+        <script>
+            // Verifica autenticação antes de executar o script principal
+            if (window.auth) {
+                window.auth.requireLogin();
+            }
+        </script>
+        <script src="../js/main.js"></script>
+        <script src="../js/login.js"></script>
+        <!-- <script src="../js/table.js"></script> -->
+    </body>
 
 </html>
