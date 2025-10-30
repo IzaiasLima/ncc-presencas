@@ -103,13 +103,6 @@
     gap: 0.5rem;
 }
 
-/* .detail-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9rem;
-} */
-
 .detail-label {
     color: #4a5568;
     font-weight: 600;
@@ -126,21 +119,6 @@
     font-size: 0.8rem;
     font-weight: 600;
 }
-
-/* .badge-present {
-    background: #c6f6d5;
-    color: #22543d;
-}
-
-.badge-absent {
-    background: #fed7d7;
-    color: #742a2a;
-} */
-
-/* .badge-no-data {
-    background: #e2e8f0;
-    color: #4a5568;
-} */
 
 .presence-history {
     margin-top: 1rem;
@@ -159,15 +137,15 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.3rem 0.8rem;
-    border-radius: 10px;
+    padding: 0.3rem 0.9rem;
+    border-radius: 7px;
     font-size: 0.95rem;
     font-weight: 600;
     background: #edf2f7;
     color: #4a5568;
 
     @media (width <=768px) {
-        padding: 0.2rem 0.55rem;
+        /* padding: 0.2rem 0.55rem; */
     }
 }
 
