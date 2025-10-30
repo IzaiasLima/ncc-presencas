@@ -74,13 +74,33 @@ class WeekData(BaseModel):
     """Schema for week attendance data"""
 
     week: int
-    # hasData: bool
+    isCurrent: bool
     present: bool
+
+
+class WeekTotals(BaseModel):
+    """Totais por semana"""
+
+    week: int
+    present: int
+    percent: int
+    absent: int
+    total: int
+
+
+class Summary(BaseModel):
+    """Resumo estatístico"""
+
+    totalPersons: int
+    totalPresent: int
+    percentPresent: int
+    totalAbsent: int
 
 
 class MatrixRow(BaseModel):
     """Schema for a row in the presence matrix"""
 
+    personId: int
     name: str
     weekData: List[WeekData]
 
@@ -88,5 +108,8 @@ class MatrixRow(BaseModel):
 class PresenceMatrix(BaseModel):
     """Schema for the complete presence matrix"""
 
+    heads: List[str]
     weeks: List[int]
-    rows: List[MatrixRow]
+    presences: List[MatrixRow]
+    weekTotals: list[WeekTotals]
+    summary: Summary

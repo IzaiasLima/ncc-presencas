@@ -1,0 +1,190 @@
+:root {
+    --text-mute-color: #718096;
+}
+
+#person-details {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+
+    &.dialog {
+        display: none;
+        width: 100vw;
+        height: 100vh;
+        justify-content: center;
+        align-items: center;
+        background: hsl(from var(--bg-color) h s l / 75%);
+        z-index: 1000;
+
+        &.show {
+            position: fixed;
+            display: flex;
+            backdrop-filter: blur(1px);
+        }
+    }
+
+    & article {
+        width: 80%;
+        max-width: 400px;
+        padding: 5px 12px 12px;
+        background-color: var(--bg-color);
+        border-radius: var(--border-radius);
+        background-color: var(--bg-dlg-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        & header {
+            justify-self: end;
+            font-size: 2rem;
+            color: var(--text-mute-color);
+            cursor: pointer;
+        }
+
+        & .dlg-body {
+            padding: 0 15px 20px;
+            line-height: 1.5em;
+            font-weight: 500;
+            background-color: var(--bg-dlg-color);
+            border-radius: var(--border-radius);
+        }
+
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+    }
+}
+
+.person-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.person-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 10px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 4px solid #2193b0;
+}
+
+.person-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.person-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.person-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.person-info {
+    & h3 {
+        color: var(--text-color);
+        margin-bottom: 0.25rem;
+        font-size: 1.1rem;
+    }
+
+    & p {
+        color: var(--text-mute-color);
+        font-size: 0.85rem;
+    }
+}
+
+.person-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.detail-label {
+    color: #4a5568;
+    font-weight: 600;
+}
+
+.detail-value {
+    color: var(--text-mute-color)
+}
+
+.presence-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-present {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.badge-absent {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+.badge-no-data {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.presence-history {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.presence-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.week-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.week-badge.present {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.week-badge.absent {
+    background: #fed7d7;
+    color: #742a2a;
+}

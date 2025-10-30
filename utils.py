@@ -1,7 +1,4 @@
-def presence_matrix(persons, presences, weeks):
-    # Obter todas as semanas únicas e ordenar
-    # weeks = sorted(set(p.week for p in presences))
-
+def build_presence_matrix(persons, presences, weeks):
     # Criar mapa de presenças por pessoa e semana
     presence_map = {}
     for p in presences:
@@ -9,8 +6,8 @@ def presence_matrix(persons, presences, weeks):
             presence_map[p.person_id] = {}
         presence_map[p.person_id][p.week] = p.present
 
-    # Criar linhas da matriz
-    rows = []
+    # Criar linhas da matriz de presencas
+    presence_rows = []
     for person in persons:
         week_data = []
         for week in weeks:
@@ -18,11 +15,13 @@ def presence_matrix(persons, presences, weeks):
             week_data.append(
                 {
                     "week": week,
-                    "current_week": is_current(week),
+                    "isCurrent": is_current(week),
                     "present": presence_map[person.id][week] if has_data else False,
                 }
             )
-        rows.append({"name": person.name, "weekData": week_data})
+        presence_rows.append(
+            {"personId": person.id, "name": person.name, "weekData": week_data}
+        )
 
     # Calcular totais por semana
     week_totals = []
@@ -35,7 +34,9 @@ def presence_matrix(persons, presences, weeks):
             {
                 "week": week,
                 "present": present,
-                "percent": round(present / total_persons, 2) * 100,
+                "percent": (
+                    round(present / total_persons, 2) * 100 if total_persons > 0 else 0
+                ),
                 "absent": absent,
                 "total": total_persons,
             }
@@ -45,7 +46,7 @@ def presence_matrix(persons, presences, weeks):
     total_cells = total_persons * len(weeks)
     total_present = len([p for p in presences if p.present])
     percent_present = (
-        0 if total_cells == 0 else round(total_present / total_cells, 2) * 100
+        round(total_present / total_cells, 2) * 100 if total_cells > 0 else 0
     )
     total_absent = total_cells - total_present
 
@@ -54,9 +55,9 @@ def presence_matrix(persons, presences, weeks):
     return {
         "heads": heads,
         "weeks": weeks,
-        "rows": rows,
+        "presences": presence_rows,
         "weekTotals": week_totals,
-        "stats": {
+        "summary": {
             "totalPersons": total_persons,
             "totalPresent": total_present,
             "percentPresent": percent_present,

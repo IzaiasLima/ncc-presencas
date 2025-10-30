@@ -10,6 +10,8 @@
         <script src="../js/mustache.min.js"></script>
 
         <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="../css/dialog.css">
+
         <title>Tabela de Presença</title>
     </head>
 
@@ -47,19 +49,19 @@
                     </div>
                 </div>
 
-                <dialog id="person-details" class="dialog">
+                <!-- <dialog id="person-details" class="dialog">
                     <article class="article">
                         <header>
                             <span onclick="closePersonDialog()">×</span>
                         </header>
 
                         <div class="dlg-body" style="background-color: aliceblue;">
-                            <!-- dados do participante -->
+                            !-- dados do participante --
                             <p>Nome: <span id="dlg-name">Izaias Lima</span></p>
                             <a id="dlg-phone" href="" target="_blank" rel="nofollow noopener noreferrer"></a>
                         </div>
                     </article>
-                </dialog>
+                </dialog> -->
 
                 <div id="loading">
                     <img class="htmx-indicator" src="../icons/spinner.svg" alt="loadding">
@@ -84,52 +86,59 @@
                                     <!-- {{/heads}} -->
                                 </tr>
                             </thead>
+
                             <tbody>
-                                <!-- {{#rows}} -->
+
+                                <!-- {{#presences}} -->
                                 <tr>
-                                    <td class="person-name" data-person-id="{{person.id}}"
+                                    <td class="person-name" data-person-id="{{personId}}"
                                         onclick="showPersonDialog(event)">{{name}}</td>
+
                                     <!-- {{#weekData}} -->
                                     <td class="">
                                         {{#present}}
-                                            <button
-                                                class="presence present {{#current_week}}current-week{{/current_week}}"
-                                                data-person-id="{{ person_id}}" data-week="{{ week }}"
+                                            <button class="presence present {{#isCurrent}}current-week{{/isCurrent}}"
+                                                data-person-id="{{personId}}" data-week="{{week}}"
                                                 onclick="updatePresence(event)">✓</button>
                                         {{/present}}
                                         {{^present}}
-                                            <button
-                                                class="presence absent {{#current_week}}current-week{{/current_week}}"
-                                                data-person-id="{{ person_id}}" data-week="{{ week }}"
+                                            <button class="presence absent {{#isCurrent}}current-week{{/isCurrent}}"
+                                                data-person-id="{{ personId}}" data-week="{{ week }}"
                                                 onclick="updatePresence(event)">&nbsp;</button>
                                         {{/present}}
                                     </td>
                                     <!-- {{/weekData}} -->
+
                                 </tr>
-                                <!-- {{/rows}} -->
+                                <!-- {{/presences}} -->
+
                             </tbody>
+
                             <tfoot>
                                 <tr class="total-cell">
                                     <td class="total-cell">Total</td>
+
                                     <!-- {{#weekTotals}} -->
                                     <td>
                                         <div class="total-present">✔ {{present}}</div>
                                         <div><small>{{percent}}%</small></div>
                                     </td>
                                     <!-- {{/weekTotals}} -->
+
                                 </tr>
+
                                 <tr>
                                     <td class="summary">Resumo</td>
                                     <td colspan="{{weeks.length}}">
                                         <div class="summary">
                                             <div class="light">
-                                                Participantes: {{stats.totalPersons}}
+                                                Participantes: {{summary.totalPersons}}
                                             </div>
                                             <div>
-                                                Presenças: {{stats.totalPresent}}
+                                                Presenças: {{summary.totalPresent}}
                                             </div>
                                             <div class="light">
-                                                Ausências: {{stats.totalAbsent}}
+                                                Ausências: {{summary.totalAbsent}}
                                             </div>
                                         </div>
                                     </td>
@@ -138,26 +147,6 @@
                         </table>
                     </template>
                 </div>
-            </div>
-
-            <!-- <table id="presence-table" style="display: table;">
-                        <tbody>
-                            <tr>
-                                <td class="person-name" data-person-id="16" onclick="showPersonDialog(event)">Antônia
-                                </td>
-
-                            </tr>
-                        </tbody>
-                    </table> -->
-
-            <div id="toast">
-                <span id="message">
-                    <!-- Mensagem de notificação -->
-                </span>
-            </div>
-
-            <div id="empty-state" style="display: none;">
-                Adicione participantes para começar o acompanhamento da frequência.
             </div>
 
             <div class="instructions">
@@ -170,6 +159,58 @@
                     <li>• A linha "Total" mostra a soma de participantes presentes em cada semana</li>
                 </ul>
             </div>
+        </div>
+
+        <dialog id="person-details" class="dialog">
+            <!-- Detalhes do participante aqui -->
+        </dialog>
+
+        <template id="details-template">
+            <article class="article">
+                <header>
+                    <span onclick="closePersonDialog()">×</span>
+                </header>
+
+                <div class="dlg-body">
+                    <div class="person-header">
+                        {{#presences}}
+                            <div class="person-avatar">{{initials}}</div>
+                            <div class="person-info">
+                                <h3>{{name}}</h3>
+                                <p>Fone: (61) 98181-3310 --- {{telefone}}</p>
+                                <!-- {{formattedPhone}} -->
+                            </div>
+                        {{/presences}}
+                    </div>
+                    <div class="person-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Presenças:</span>
+                            <span class="detail-value">{{presenceCount}} nas últimas semanas</span>
+                        </div>
+                    </div>
+                    <div class="presence-history">
+                        <div class="detail-label">Histórico por Semana:</div>
+                        <div class="presence-list">
+                            {{#heads}}
+                                <span class="week-badge {{#present}}present{{/present}}{{^present}}absent{{/present}}">
+                                    {{.}}
+                                    {{#present}}✓{{/present}}{{^present}}✗{{/present}}
+                                </span>
+                            {{/heads}}
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </template>
+
+        <div id="toast">
+            <span id="message">
+                <!-- Mensagem de notificação -->
+            </span>
+        </div>
+
+        <div id="empty-state" style="display: none;">
+            Adicione participantes para começar o acompanhamento da frequência.
         </div>
 
         <script src="../js/auth.js"></script>

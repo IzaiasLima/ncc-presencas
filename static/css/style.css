@@ -255,15 +255,10 @@ td {
     cursor: default;
     pointer-events: none;
 
-    /* &.alterable {
-        cursor: pointer;
-        pointer-events: all;
+    &.summary {
+        font-weight: 600;
+        font-size: 1.05rem;
     }
-
-    &.current-week {
-        cursor: pointer;
-        pointer-events: all
-    } */
 
     & .summary {
         display: flex;
@@ -281,7 +276,6 @@ td {
 
     &.alterable,
     &:has(.current-week) {
-        /* cursor: pointer; */
         pointer-events: all
     }
 }
@@ -291,19 +285,13 @@ th:first-child {
     position: sticky;
     left: 0;
     text-align: left;
-    /* background: white;
-    z-index: 10; */
+    z-index: 10;
 }
 
 td:first-child {
     cursor: pointer;
     pointer-events: all;
 }
-
-/* th:first-child {
-    background: #f3f4f6;
-    z-index: 15;
-} */
 
 tbody tr:hover {
     background: #f9fafb;
@@ -337,14 +325,6 @@ a:hover {
     color: white;
     font-size: 2rem;
     font-weight: 600;
-
-    /* cursor: not-allowed;
-    pointer-events: none;
-
-    &.alterable {
-        cursor: pointer;
-        pointer-events: all;
-    } */
 
     &.current-week {
         cursor: pointer;
@@ -390,7 +370,6 @@ a:hover {
 
 .instructions {
     background-color: var(--bg-color);
-    ;
     border-radius: var(--border-radius);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 16px;
@@ -440,17 +419,6 @@ a:hover {
     display: inline;
 }
 
-/* #has-no-data {
-    display: none;
-    text-align: center;
-    padding: 20px;
-    color: #f44336;
-
-    &.show {
-        display: block;
-    }
-} */
-
 #toast {
     position: fixed;
     bottom: 20px;
@@ -470,53 +438,5 @@ a:hover {
 
     &.show {
         opacity: 1;
-    }
-}
-
-#person-details {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: none;
-
-    &.dialog {
-        display: none;
-        width: 100vw;
-        height: 100vh;
-        justify-content: center;
-        align-items: center;
-        background: var(--bg-dark-color);
-        z-index: 1000;
-
-        &.show {
-            position: fixed;
-            /* overflow: hidden; */
-            display: flex;
-        }
-    }
-
-    & article {
-        width: 80%;
-        max-width: 400px;
-        padding: 0 7px 7px;
-        background-color: var(--bg-color);
-        border-radius: var(--border-radius);
-        background-color: var(--bg-dlg-color);
-        /* background-color: #d3d3d3; */
-
-        & header {
-            justify-self: end;
-            font-size: 2rem;
-            color: var(--text-color);
-            cursor: pointer;
-        }
-
-        & .dlg-body {
-            padding: 15px;
-            line-height: 1.5em;
-            font-weight: 500;
-            background-color: var(--bg-dlg-color);
-            border-radius: var(--border-radius);
-        }
     }
 }
