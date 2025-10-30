@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from models import PersonDB, PresenceDB, UserDB
-from schemas import PresenceCreate, PresenceMatrix, PresenceRead, PresencesPerson
+from schemas import PresenceCreate, PresenceMatrix, PresenceRead
 from security import get_current_user
 from database import get_db
 from utils import current_week, build_presence_matrix
@@ -94,6 +94,8 @@ def list_presences_by_person(
     semana_start = semana_last - 7
     semana_start = max(1, min(semana_start, 46))
 
+    weeks = [x for x in range(semana_start, semana_last + 1)]
+
     person = (
         session.query(PersonDB)
         .filter(PersonDB.owner_id == current_user.id, PersonDB.id == id)
@@ -105,35 +107,34 @@ def list_presences_by_person(
         .filter(
             PresenceDB.week >= semana_start,
             PresenceDB.week <= semana_last,
+            PresenceDB.present == True,
             PresenceDB.person_id == id,
             PresenceDB.owner_id == current_user.id,
         )
+        .order_by(PresenceDB.week)
         .all()
     )
 
+    week_presences = []
+    presence = None
+    qtd_weeks = 0
+
+    for w in weeks:
+        week_presences.append({"week": w, "present": False})
+
+        for p in presences:
+            if p.week == w:
+                # presence = p
+                week_presences[-1] = p
+                qtd_weeks += 1
+                break
+
     dados = {}
+    dados["qtdWeeks"] = qtd_weeks
     dados["person"] = person
-    dados["presences"] = presences
+    dados["presences"] = week_presences
 
     return dados
-
-
-# @router.get("/person/{person_id}/{week}/{num_weeks}", response_model=PresenceMatrix)
-# def list_presences(
-#     person_id: int,
-#     week: int,
-#     num_weeks: int,
-#     current_user: UserDB = Depends(get_current_user),
-#     session: Session = Depends(get_db),
-# ):
-#     """
-#     Lista todas as pessoas geridas pelo usuário autenticado
-#     presenças de na lista de semanas selecionadas.
-
-#     """
-
-#     dados = get_presences_matrix(week, 12, person_id, current_user, session)
-#     return dados
 
 
 @router.get("/{week}/{num_weeks}", response_model=PresenceMatrix)

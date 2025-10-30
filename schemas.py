@@ -83,7 +83,7 @@ class WeekTotals(BaseModel):
 
     week: int
     present: int
-    percent: int
+    percent: float
     absent: int
     total: int
 
@@ -93,7 +93,7 @@ class Summary(BaseModel):
 
     totalPersons: int
     totalPresent: int
-    percentPresent: int
+    percentPresent: float
     totalAbsent: int
 
 

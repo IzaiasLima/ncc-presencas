@@ -118,37 +118,22 @@ async function showPersonDialog(evt) {
     const personId = obj.getAttribute("data-person-id");
     const dlg = document.getElementById('person-details');
 
-    // const personName = document.getElementById("dlg-name");
-    // const phoneLink = document.getElementById('dlg-phone');
-
-    const week = getWeek();
-
-    htmx.ajax('GET', `/presence/person/${personId}/${week}/6`, {
+    htmx.ajax('GET', `/presence/person/${personId}`, {
         handler: function (element, response) {
-
             if (response.xhr.status >= 400) {
                 showToast(`Os dados não estão disponíveis! (${response.xhr.statusText} Error.)`, true);
             }
 
             const dados = JSON.parse(response.xhr.responseText);
-
-            console.log(dados.presences);
-
-
-            dados.telefone = '+55(11) 98888-5544';
+            phone = dados.telefone = dados.person.phone;
+            dados['formatedPhone'] = formatPhone(phone);
+            dados['initials'] = getInitials(dados);
 
             const template = document.getElementById('details-template').innerHTML;
             const details = document.getElementById('person-details');
             details.innerHTML = Mustache.render(template, dados);
             details.classList.add('show');
         }
-
-        // if (person) {
-        //     personName.innerHTML = person.name;
-        //     phoneLink.innerHTML = `Telefone: ${person.phone}`;
-        //     phoneLink.href = `https://wa.me/${person.phone}`;
-        //     dlg.classList.add('show');
-        // }
     });
 }
 
@@ -167,6 +152,14 @@ function formatPhone(phone) {
     } else if (cleaned.length === 10) {
         return `(${cleaned.substr(0, 2)}) ${cleaned.substr(2, 4)}-${cleaned.substr(6)}`;
     }
+}
+
+function getInitials(dados) {
+    return dados.person.name.split(' ')
+        .map(n => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
 }
 
 function cleanPhone(phone) {

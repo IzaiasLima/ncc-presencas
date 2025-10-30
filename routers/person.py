@@ -6,6 +6,7 @@ from database import get_db
 from models import UserDB, PersonDB
 from schemas import PersonCreate, PersonRead, PersonUpdate
 from security import get_current_user
+from utils import cleanPhone
 
 router = APIRouter(prefix="/person", tags=["person"])
 
@@ -17,7 +18,7 @@ def create_person(
     db: Session = Depends(get_db),
 ):
     person = PersonDB(
-        name=person_in.name, phone=person_in.phone, owner_id=current_user.id
+        name=person_in.name, phone=cleanPhone(person_in.phone), owner_id=current_user.id
     )
 
     try:

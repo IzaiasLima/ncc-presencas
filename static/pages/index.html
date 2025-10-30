@@ -49,28 +49,11 @@
                     </div>
                 </div>
 
-                <!-- <dialog id="person-details" class="dialog">
-                    <article class="article">
-                        <header>
-                            <span onclick="closePersonDialog()">×</span>
-                        </header>
-
-                        <div class="dlg-body" style="background-color: aliceblue;">
-                            !-- dados do participante --
-                            <p>Nome: <span id="dlg-name">Izaias Lima</span></p>
-                            <a id="dlg-phone" href="" target="_blank" rel="nofollow noopener noreferrer"></a>
-                        </div>
-                    </article>
-                </dialog> -->
-
                 <div id="loading">
                     <img class="htmx-indicator" src="../icons/spinner.svg" alt="loadding">
                 </div>
 
                 <div hx-ext="client-side-templates">
-                    <!-- <div id="api-call" hx-get="/presence/matrix/0" hx-trigger="load" hx-indicator="#loading"
-                        mustache-template="presences-matrix">
-                    </div> -->
 
                     <div id="result">
                         <!-- Os dados vão ser exibidos aqui. -->
@@ -130,17 +113,19 @@
                                 <tr>
                                     <td class="summary">Resumo</td>
                                     <td colspan="{{weeks.length}}">
+                                        <!-- {{#summary }} -->
                                         <div class="summary">
                                             <div class="light">
-                                                Participantes: {{summary.totalPersons}}
+                                                Participantes: {{totalPersons}}
                                             </div>
                                             <div>
-                                                Presenças: {{summary.totalPresent}}
+                                                Presenças: {{totalPresent}}
                                             </div>
                                             <div class="light">
-                                                Ausências: {{summary.totalAbsent}}
+                                                Ausências: {{totalAbsent}}
                                             </div>
                                         </div>
+                                        <!-- {{/summary }} -->
                                     </td>
                                 </tr>
                             </tfoot>
@@ -173,30 +158,30 @@
 
                 <div class="dlg-body">
                     <div class="person-header">
-                        {{#presences}}
+                        {{#person}}
                             <div class="person-avatar">{{initials}}</div>
                             <div class="person-info">
                                 <h3>{{name}}</h3>
-                                <p>Fone: (61) 98181-3310 --- {{telefone}}</p>
-                                <!-- {{formattedPhone}} -->
+                                <p>Fone: {{formatedPhone}}</p>
+                                <p>Fone: {{phone}}</p>
                             </div>
-                        {{/presences}}
+                        {{/person}}
                     </div>
-                    <div class="person-details">
-                        <div class="detail-row">
+                    <div class="details">
+                        <div class="">
                             <span class="detail-label">Presenças:</span>
-                            <span class="detail-value">{{presenceCount}} nas últimas semanas</span>
+                            <span class="detail-value">{{qtdWeeks}} participações nas últimas semanas</span>
                         </div>
                     </div>
                     <div class="presence-history">
                         <div class="detail-label">Histórico por Semana:</div>
                         <div class="presence-list">
-                            {{#heads}}
+                            {{#presences}}
                                 <span class="week-badge {{#present}}present{{/present}}{{^present}}absent{{/present}}">
-                                    {{.}}
+                                    {{week}}
                                     {{#present}}✓{{/present}}{{^present}}✗{{/present}}
                                 </span>
-                            {{/heads}}
+                            {{/presences}}
                         </div>
                     </div>
                 </div>

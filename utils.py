@@ -35,7 +35,7 @@ def build_presence_matrix(persons, presences, weeks):
                 "week": week,
                 "present": present,
                 "percent": (
-                    round(present / total_persons, 2) * 100 if total_persons > 0 else 0
+                    round(present / total_persons * 100) if total_persons > 0 else 0
                 ),
                 "absent": absent,
                 "total": total_persons,
@@ -45,9 +45,7 @@ def build_presence_matrix(persons, presences, weeks):
     # Calcular estatísticas gerais
     total_cells = total_persons * len(weeks)
     total_present = len([p for p in presences if p.present])
-    percent_present = (
-        round(total_present / total_cells, 2) * 100 if total_cells > 0 else 0
-    )
+    percent_present = round(total_present / total_cells * 100) if total_cells > 0 else 0
     total_absent = total_cells - total_present
 
     heads = [f"S{x}★" if current_week() == x else f"S{x}" for x in weeks]
@@ -79,3 +77,8 @@ def current_week():
 
 def is_current(week):
     return week == current_week()
+
+
+def cleanPhone(phone: str):
+    """Retorna apenas os dígitos"""
+    return "".join(filter(str.isdigit, phone))
