@@ -24,8 +24,8 @@
                 </div>
 
                 <div class="input-group">
-                    <input type="text" id="new-person" placeholder="Nome do participante">
-                    <input type="text" id="new-person-phone" placeholder="Telefone">
+                    <input type="text" id="person-name" placeholder="Nome do participante">
+                    <input type="text" id="person-phone" placeholder="Telefone">
                     <button class="btn primary" onclick="addPerson()">
                         <span>
                             <img class="login" src="../images/plus.png">
@@ -40,9 +40,9 @@
                     <div class="weeks">
                         <div>
                             <label>Semana:</label>
-                            <input type="number" id="current-week" min="1" max="53" onchange="rebuild()">
+                            <input type="number" id="current-week" min="1" max="53" onchange="renderPresences()">
                             <div class="btns-weeks">
-                                <button class="btn primary" onclick="rebuild()">Seleciona Semana</button>
+                                <button class="btn primary" onclick="renderPresences()">Seleciona Semana</button>
                                 <button class="btn primary" onclick="setCurrentWeek()">Semana Atual</button>
                             </div>
                         </div>
@@ -164,17 +164,21 @@
                             <div class="person-avatar">{{initials}}</div>
                             <div class="person-info">
                                 <h3>{{name}}</h3>
-                                <a href="https://wa.me/{{phone}}">
+                                <a href="https://wa.me/{{phone}}" target="_blank" rel="nofollow noopener noreferrer">
                                     <span>Fone: {{formatedPhone}}</span>
                                 </a>
                             </div>
                         {{/person}}
                     </div>
                     <div class="details">
-                        <div class="">
-                            <span class="detail-label">Presenças:</span>
+                        <span class="detail-label">Presenças:</span>
+                        {{#moreThanOne}}
                             <span class="detail-value">{{qtdWeeks}} participações nas últimas semanas</span>
-                        </div>
+                        {{/moreThanOne}}
+
+                        {{^moreThanOne}}
+                            <span class="detail-value">{{qtdWeeks}} participação nas últimas semanas</span>
+                        {{/moreThanOne}}
                     </div>
                     <div class="presence-history">
                         <div class="detail-label">Histórico por Semana:</div>
@@ -210,7 +214,6 @@
         </script>
         <script src="../js/main.js"></script>
         <script src="../js/login.js"></script>
-        <!-- <script src="../js/table.js"></script> -->
     </body>
 
 </html>

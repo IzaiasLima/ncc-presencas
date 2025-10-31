@@ -91,8 +91,8 @@ def list_presences_by_person(
     """
 
     semana_last = current_week()
-    semana_start = semana_last - 7
-    semana_start = max(1, min(semana_start, 46))
+    semana_start = semana_last - 9
+    semana_start = max(1, min(semana_start, 44))
 
     weeks = [x for x in range(semana_start, semana_last + 1)]
 
@@ -124,13 +124,13 @@ def list_presences_by_person(
 
         for p in presences:
             if p.week == w:
-                # presence = p
                 week_presences[-1] = p
                 qtd_weeks += 1
                 break
 
     dados = {}
     dados["qtdWeeks"] = qtd_weeks
+    dados["moreThanOne"] = qtd_weeks > 1
     dados["person"] = person
     dados["presences"] = week_presences
 

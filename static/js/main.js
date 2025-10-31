@@ -15,7 +15,28 @@ const HEADERS = {
     'Authorization': `Bearer ${window.auth.getToken()}`, 'Content-Type': 'application/json'
 }
 
-function rebuild() {
+// Adicionar pessoa na API
+async function addPerson() {
+    const personName = document.getElementById('person-name');
+    const personPhone = document.getElementById('person-phone');
+
+    const personURL = `${API_URL}/person`;
+
+    await fetch(personURL, {
+        method: 'POST',
+        headers: HEADERS,
+
+        body: JSON.stringify({ name: personName.value, phone: personPhone.value })
+    }).then(response => {
+        if (!response.ok) {
+            showToast(`Não foi possível cadastrar o participante. (Erro: ${response.status}).`, true);
+        }
+    });
+
+    renderPresences();
+}
+
+function renderPresences() {
     const week = getWeek();
 
     htmx.ajax('GET', `/presence/${week}/${NUM_WEEKS}`, {
@@ -37,12 +58,38 @@ function rebuild() {
     });
 }
 
-function getWeek() {
-    var weekElm = document.getElementById('current-week');
-    week = (weekElm.value) ? weekElm.value : calcCurrentWeek();
-    week = Math.max(1, Math.min(53, week));
-    weekElm.value = week;
-    return week;
+// show dialog
+async function showPersonDialog(evt) {
+    const obj = evt.target;
+
+    const container = obj.getAttribute("container");
+    const personId = obj.getAttribute("data-person-id");
+    const dlg = document.getElementById('person-details');
+
+    htmx.ajax('GET', `/presence/person/${personId}`, {
+        handler: function (element, response) {
+            if (response.xhr.status >= 400) {
+                showToast(`Os dados não estão disponíveis! (${response.xhr.statusText} Error.)`, true);
+            }
+
+            const dados = JSON.parse(response.xhr.responseText);
+            const phone = dados.person.phone;
+
+            dados['formatedPhone'] = formatPhone(phone);
+            dados['initials'] = getInitials(dados);
+
+            const template = document.getElementById('details-template').innerHTML;
+            const details = document.getElementById('person-details');
+            details.innerHTML = Mustache.render(template, dados);
+            details.classList.add('show');
+        }
+    });
+}
+
+// close dialog
+async function closePersonDialog() {
+    const dlg = document.getElementById('person-details');
+    dlg.classList.remove('show');
 }
 
 // Função que persiste alteração de uma presença na API
@@ -65,7 +112,15 @@ async function updatePresence(evt) {
         }
     });
 
-    rebuild();
+    renderPresences();
+}
+
+function getWeek() {
+    var weekElm = document.getElementById('current-week');
+    week = (weekElm.value) ? weekElm.value : calcCurrentWeek();
+    week = Math.max(1, Math.min(53, week));
+    weekElm.value = week;
+    return week;
 }
 
 // Exibe mensagem tipo TOAST
@@ -110,39 +165,6 @@ h2Title.addEventListener('click', (event) => {
     }
 });
 
-// show dialog
-async function showPersonDialog(evt) {
-    const obj = evt.target;
-
-    const container = obj.getAttribute("container");
-    const personId = obj.getAttribute("data-person-id");
-    const dlg = document.getElementById('person-details');
-
-    htmx.ajax('GET', `/presence/person/${personId}`, {
-        handler: function (element, response) {
-            if (response.xhr.status >= 400) {
-                showToast(`Os dados não estão disponíveis! (${response.xhr.statusText} Error.)`, true);
-            }
-
-            const dados = JSON.parse(response.xhr.responseText);
-            phone = dados.telefone = dados.person.phone;
-            dados['formatedPhone'] = formatPhone(phone);
-            dados['initials'] = getInitials(dados);
-
-            const template = document.getElementById('details-template').innerHTML;
-            const details = document.getElementById('person-details');
-            details.innerHTML = Mustache.render(template, dados);
-            details.classList.add('show');
-        }
-    });
-}
-
-// close dialog
-async function closePersonDialog() {
-    const dlg = document.getElementById('person-details');
-    dlg.classList.remove('show');
-}
-
 function formatPhone(phone) {
     if (!phone) return '';
     const cleaned = cleanPhone(phone);
@@ -181,7 +203,7 @@ function calcCurrentWeek() {
 function setCurrentWeek() {
     const elm = document.getElementById('current-week');
     elm.value = calcCurrentWeek();
-    rebuild();
+    renderPresences();
 }
 
-window.onload = () => rebuild();
+window.onload = () => renderPresences();
