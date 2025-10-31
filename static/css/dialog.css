@@ -1,5 +1,7 @@
 :root {
     --text-mute-color: #718096;
+    --bg-dlg-color: #ebeff1;
+    --bg-border-color: #dbdfe3;
 }
 
 #person-details {
@@ -29,6 +31,7 @@
         max-width: 550px;
         padding: 8px 15px 15px;
         background-color: var(--bg-color);
+        border: 1px solid var(--bg-border-color);
         border-radius: var(--border-radius);
         background-color: var(--bg-dlg-color);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -59,7 +62,7 @@
 
         &:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
         }
     }
 }
@@ -75,7 +78,7 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+    background: linear-gradient(135deg, #95a6bf 0%, #eef3f8 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -143,7 +146,7 @@
     border-radius: 7px;
     font-size: 0.95rem;
     font-weight: 600;
-    background: #edf2f7;
+    /* background: #edf2f7; */
     color: #4a5568;
 
     @media (width <=768px) {
@@ -152,8 +155,8 @@
 }
 
 .week-badge.present {
-    background: #c6f6d5;
-    color: #22543d;
+    background: #a0fdbd;
+    color: #13402b;
 }
 
 .week-badge.absent {
