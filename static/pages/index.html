@@ -137,11 +137,13 @@
             <div class="instructions">
                 <h2 id="h2-title">Instruções:</h2>
                 <ul>
-                    <li>• Adicione participantes usando o campo acima</li>
-                    <li>• Clique nas células para marcar presença (verde) ou ausência (cinza)</li>
-                    <li>• Use "Selecionar semana" para navegar pelas 52 semanas</li>
-                    <li>• Apenas a semana atual (destacada com ★) pode ser editada</li>
-                    <li>• A linha "Total" mostra a soma de participantes presentes em cada semana</li>
+                    <li>• Adicione participantes usando o campo e o botão no topo da tela</li>
+                    <li>• Use "Selecionar Semana" para navegar pelas semanas do ano</li>
+                    <li>• Clique nos campos para marcar presença (verde) ou ausência (cinza)</li>
+                    <li>• Apenas a semana atual (destacada com ★) pode ser alterada</li>
+                    <li>• A linha "Total" exibe a quantidade de pessoas presentes em cada NCC</li>
+                    <li>• Clique no nome da pessoa para acessar o telefone dela</li>
+                    <li>• Clique no número do telefone para conversar pelo Whatsapp</li>
                 </ul>
             </div>
         </div>
@@ -162,8 +164,9 @@
                             <div class="person-avatar">{{initials}}</div>
                             <div class="person-info">
                                 <h3>{{name}}</h3>
-                                <p>Fone: {{formatedPhone}}</p>
-                                <p>Fone: {{phone}}</p>
+                                <a href="https://wa.me/{{phone}}">
+                                    <span>Fone: {{formatedPhone}}</span>
+                                </a>
                             </div>
                         {{/person}}
                     </div>
