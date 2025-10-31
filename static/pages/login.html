@@ -2,51 +2,52 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frequência Semanal - Login</title>
-    <link rel="stylesheet" href="../css/style.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Frequência Semanal - Login</title>
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
 
-<body>
-    <div class="container login">
-        <div class="header login">
-            <h1>Autenticação</h1>
+    <body>
+        <div class="container login">
+            <div class="header login">
+                <h1>Autenticação</h1>
+            </div>
+
+            <div class="card">
+                <form id="login-form" onsubmit="event.preventDefault(); login();">
+                    <div class="input-group login-card">
+                        <input type="email" id="email" placeholder="E-mail" required>
+                        <input type="password" id="password" placeholder="Senha" required>
+                        <button type="submit" class="btn primary login">
+                            <!-- <span>🔓</span> Autenticar -->
+                            <img src="../images/unlock.png" alt="unlock"> Autenticar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="instructions">
+                <h2>Instruções:</h2>
+                <ul>
+                    <li>• Use o e-mail e a senha que você cadastrou no sistema para se autenticar.</li>
+                    <li>• Para recuperação senha esquecida, entre em contato pelo e-mail:
+                        <a href="mailto: contato@izaias.com.br">contato@izaias.com.br</a>
+                    </li>
+                </ul>
+            </div>
         </div>
 
-        <div class="card">
-            <form id="login-form" onsubmit="event.preventDefault(); login();">
-                <div class="input-group login-card">
-                    <input type="email" id="email" placeholder="E-mail" required>
-                    <input type="password" id="password" placeholder="Senha" required>
-                    <button type="submit" class="btn primary login">
-                        <span>🔓</span> Autenticar
-                    </button>
-                </div>
-            </form>
+        <div id="toast">
+            <span id="message">
+                <!-- Mensagem de notificação -->
+            </span>
         </div>
 
-        <div class="instructions">
-            <h2>Instruções:</h2>
-            <ul>
-                <li>• Use o e-mail e a senha que você cadastrou no sistema para se autenticar.</li>
-                <li>• Para recuperação senha esquecida, entre em contato pelo e-mail:
-                    <a href="mailto: contato@izaias.com.br">contato@izaias.com.br</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <div id="toast">
-        <span id="message">
-            <!-- Mensagem de notificação -->
-        </span>
-    </div>
-
-    <script src="../js/main.js"></script>
-    <script src="../js/auth.js"></script>
-    <script src="../js/login.js"></script>
-</body>
+        <script src="../js/main.js"></script>
+        <script src="../js/auth.js"></script>
+        <script src="../js/login.js"></script>
+    </body>
 
 </html>
