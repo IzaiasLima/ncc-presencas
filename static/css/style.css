@@ -37,7 +37,8 @@ body {
 
     &.login {
         display: flex;
-        max-width: 600px;
+        width: 100%;
+        max-width: 420px;
         flex-direction: column;
         justify-content: center;
         height: 100vh;
@@ -86,18 +87,6 @@ body {
     }
 }
 
-/* img.login {
-    align-self: flex-end;
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
-
-    @media (width <=768px) {
-        width: 22px;
-        height: 22px;
-    }
-} */
-
 h1 {
     font-size: 2rem;
     color: var(--text-color);
@@ -124,10 +113,6 @@ h1 {
 
     &:hover {
         background-color: var(--hover-color);
-        /* font-size: 1.03em; */
-        /* color: #e4e6ec; */
-        /* box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.1); */
-
     }
 
     & .success {
