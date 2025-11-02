@@ -1,13 +1,18 @@
-from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload
 
 from models import PersonDB, PresenceDB, UserDB
-from schemas import PresenceCreate, PresenceMatrix, PresenceRead
 from security import get_current_user
 from database import get_db
 from utils import current_week, build_presence_matrix
+from schemas import (
+    PersonPresences,
+    PresenceCreate,
+    PresenceMatrix,
+    PresenceRead,
+)
 
 
 router = APIRouter(prefix="/presence", tags=["presence"])
@@ -40,42 +45,24 @@ def create_presence(
     return presence
 
 
-@router.get("/{semana}", response_model=None)
-def list_presences(
-    semana: int,
-    current_user: UserDB = Depends(get_current_user),
-    session: Session = Depends(get_db),
+@router.get("", response_model=None)
+async def get_persons_with_presences(
+    session: Session = Depends(get_db), current_user: UserDB = Depends(get_current_user)
 ):
-    """
-    Lista todas as pessoas geridas pelo usuário autenticado
-    presenças na lsemana selecionada.
+    if not current_user.role or "ADMIN" not in current_user.role:
+        raise HTTPException(status_code=401, detail="Insufficient credentials")
 
-    """
+    persons = session.query(PersonDB).order_by(PersonDB.name).all()
 
-    semana_start: int = semana - 4
-    semana_start = 1 if semana < 0 else 48 if semana > 48 else semana_start
-
-    persons = (
-        session.query(PersonDB)
-        .filter(PersonDB.owner_id == current_user.id)
-        .order_by(PersonDB.name)
-        .all()
-    )
     presences = (
         session.query(PresenceDB)
-        .filter(
-            PresenceDB.week >= semana_start,
-            PresenceDB.week <= semana,
-            PresenceDB.owner_id == current_user.id,
-        )
+        .filter(PresenceDB.week >= 1, PresenceDB.week <= 53, PresenceDB.present)
         .all()
     )
 
-    dados = {}
+    weeks = [w for w in range(1, 54)]
 
-    dados["person"] = persons
-    dados["presence"] = presences
-
+    dados = build_presence_matrix(persons, presences, weeks)
     return dados
 
 
@@ -116,7 +103,7 @@ def list_presences_by_person(
     )
 
     week_presences = []
-    presence = None
+    # presence = None
     qtd_weeks = 0
 
     for w in weeks:
@@ -150,14 +137,13 @@ def list_presences(
 
     """
 
-    dados = get_presences_matrix(week, num_weeks, None, current_user, session)
+    dados = get_presences_matrix(week, num_weeks, current_user, session)
     return dados
 
 
 def get_presences_matrix(
     week: int,
     numWeeks: int,
-    person_id: int,
     current_user: UserDB = Depends(get_current_user),
     session: Session = Depends(get_db),
 ):
@@ -179,28 +165,31 @@ def get_presences_matrix(
 
     persons = None
 
-    if person_id:
-        persons = (
-            session.query(PersonDB)
-            .filter(PersonDB.owner_id == current_user.id, PersonDB.id == person_id)
-            .order_by(PersonDB.name)
-            .all()
+    # if person_id:
+    #     persons = (
+    #         session.query(PersonDB)
+    #         .filter(PersonDB.owner_id == current_user.id, PersonDB.id == person_id)
+    #         .order_by(PersonDB.name)
+    #         .all()
+    #     )
+    # else:
+    persons = (
+        session.query(PersonDB)
+        .filter(
+            # PersonDB.owner_id == current_user.id,
+            or_(PersonDB.owner_id == current_user.id, current_user.isAdmin() == True),
         )
-    else:
-        persons = (
-            session.query(PersonDB)
-            .filter(PersonDB.owner_id == current_user.id)
-            .order_by(PersonDB.name)
-            .all()
-        )
+        .order_by(PersonDB.name)
+        .all()
+    )
 
     presences = (
         session.query(PresenceDB)
         .filter(
             PresenceDB.week >= week,
             PresenceDB.week <= week_limit,
-            PresenceDB.owner_id == current_user.id,
-            PresenceDB.present,
+            PresenceDB.present == True,
+            or_(PresenceDB.owner_id == current_user.id, current_user.isAdmin() == True),
         )
         .all()
     )

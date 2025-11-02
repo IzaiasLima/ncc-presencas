@@ -56,7 +56,7 @@ class PresenceRead(PresenceCreate):
     """Schema para leitura das presencas"""
 
     id: int
-    owner_id: int
+    # owner_id: int
     person: PersonRead
 
     model_config = ConfigDict(from_attributes=True)
@@ -74,8 +74,21 @@ class WeekData(BaseModel):
     """Schema for week attendance data"""
 
     week: int
-    isCurrent: bool
+    isCurrent: bool = False
     present: bool
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class PersonPresences(BaseModel):
+    """Schema para leitura de pessoa com suas presenças"""
+
+    id: int
+    name: str
+    phone: str | None
+    presence: list[WeekData]
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class WeekTotals(BaseModel):

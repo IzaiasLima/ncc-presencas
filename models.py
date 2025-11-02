@@ -16,9 +16,13 @@ class UserDB(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
+    role = Column(String, nullable=True)
     hashed_password = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     person = relationship("PersonDB", back_populates="owner")
+
+    def isAdmin(self):
+        return self.role and ("ADMIN" in self.role)
 
 
 class PersonDB(Base):

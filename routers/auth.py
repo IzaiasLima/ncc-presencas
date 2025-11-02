@@ -25,7 +25,7 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
     try:
         db.commit()
         db.refresh(user)
-    except IntegrityError:
+    except (IntegrityError, ValueError):
         db.rollback()
         raise HTTPException(status_code=400, detail="Email already registered")
     token = create_access_token({"sub": user.email})

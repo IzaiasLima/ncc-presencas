@@ -11,42 +11,17 @@
 
         <link rel="stylesheet" href="../css/style.css">
         <link rel="stylesheet" href="../css/dialog.css">
+        <link rel="stylesheet" href="../css/report.css">
 
-        <title>Acompanhamento de Presença</title>
+        <title>Acompanhamento Geral de Presença</title>
     </head>
 
     <body>
-        <div class="container">
+        <div class="container full">
             <div class="card">
                 <div class="header">
                     <h1>Frequência Semanal do NCC</h1>
                     <img class="logout" src="../images/exit.png" onclick="event.preventDefault(); logout();" alt="exit">
-                </div>
-
-                <div class="input-group">
-                    <input type="text" id="person-name" placeholder="Nome do participante">
-                    <input type="text" id="person-phone" placeholder="Telefone">
-                    <button class="btn primary" onclick="addPerson()">
-                        <span>
-                            <img src="../images/plus.png">
-                        </span>
-                        <span class="btn-label">
-                            Adicionar
-                        </span>
-                    </button>
-                </div>
-
-                <div class="navigation">
-                    <div class="weeks">
-                        <div>
-                            <label>Semana:</label>
-                            <input type="number" id="current-week" min="1" max="53" onchange="renderPresences()">
-                            <div class="btns-weeks">
-                                <button class="btn primary" onclick="renderPresences()">Seleciona Semana</button>
-                                <button class="btn primary" onclick="setCurrentWeek()">Semana Atual</button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <div id="loading">
@@ -55,17 +30,17 @@
 
                 <div hx-ext="client-side-templates">
 
-                    <div id="result">
+                    <div id="result" class="full">
                         <!-- Os dados vão ser exibidos aqui. -->
                     </div>
 
                     <template id="presences-matrix">
-                        <table>
+                        <table class="table-fixed">
                             <thead>
                                 <tr>
-                                    <th>Nome</th>
+                                    <th class="mini">Nome</th>
                                     <!-- {{#heads}} -->
-                                    <th id="S{{.}}">{{.}}</th>
+                                    <th id="S{{.}}" class="mini">{{.}}</th>
                                     <!-- {{/heads}} -->
                                 </tr>
                             </thead>
@@ -74,18 +49,20 @@
 
                                 <!-- {{#presences}} -->
                                 <tr>
-                                    <td class="person-name" data-person-id="{{personId}}"
+                                    <td class="person-name mini" data-person-id="{{personId}}"
                                         onclick="showPersonDialog(event)">{{name}}</td>
 
                                     <!-- {{#weekData}} -->
-                                    <td class="">
+                                    <td class="mini">
                                         {{#present}}
-                                            <button class="presence present {{#isCurrent}}current-week{{/isCurrent}}"
+                                            <button
+                                                class="presence mini present {{#isCurrent}}current-week{{/isCurrent}}"
                                                 data-person-id="{{personId}}" data-week="{{week}}"
                                                 onclick="updatePresence(event)">✓</button>
                                         {{/present}}
                                         {{^present}}
-                                            <button class="presence absent {{#isCurrent}}current-week{{/isCurrent}}"
+                                            <button
+                                                class="presence mini absent {{#isCurrent}}current-week{{/isCurrent}}"
                                                 data-person-id="{{ personId}}" data-week="{{ week }}"
                                                 onclick="updatePresence(event)">&nbsp;</button>
                                         {{/present}}
@@ -99,34 +76,15 @@
 
                             <tfoot>
                                 <tr class="total-cell">
-                                    <td class="total-cell">Total</td>
+                                    <td class="total-cell mini">Total</td>
 
                                     <!-- {{#weekTotals}} -->
-                                    <td>
+                                    <td class=" mini">
                                         <div class="total-present">✔ {{present}}</div>
                                         <div><small>{{percent}}%</small></div>
                                     </td>
                                     <!-- {{/weekTotals}} -->
 
-                                </tr>
-
-                                <tr>
-                                    <td class="summary">Resumo</td>
-                                    <td colspan="{{weeks.length}}">
-                                        <!-- {{#summary }} -->
-                                        <div class="summary">
-                                            <div class="light">
-                                                Participantes: {{totalPersons}}
-                                            </div>
-                                            <div>
-                                                Presenças: {{totalPresent}}
-                                            </div>
-                                            <div class="light">
-                                                Ausências: {{totalAbsent}}
-                                            </div>
-                                        </div>
-                                        <!-- {{/summary }} -->
-                                    </td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -214,7 +172,7 @@
         </script>
         <script src="../js/login.js"></script>
         <script src="../js/main.js"></script>
-        <script src="../js/table.js"></script>
+        <script src="../js/report.js"></script>
     </body>
 
 </html>

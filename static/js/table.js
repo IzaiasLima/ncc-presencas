@@ -1,190 +1,46 @@
+// Adicionar pessoa na API
+async function addPerson() {
+    const personName = document.getElementById('person-name');
+    const personPhone = document.getElementById('person-phone');
 
-async function fetchDataPerson(personId) {
-    if (!personId) return;
+    const personURL = `${API_URL}/person`;
 
-    const personURL = `${API_URL}/person/${personId}`;
+    await fetch(personURL, {
+        method: 'POST',
+        headers: HEADERS,
 
-    try {
-        const response = await fetch(personURL, { headers: HEADERS });
-
+        body: JSON.stringify({ name: personName.value, phone: personPhone.value })
+    }).then(response => {
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            showToast(`Não foi possível cadastrar o participante. (Erro: ${response.status}).`, true);
         }
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Erro ao buscar dados do participante:', error);
-        throw error;
-    }
-}
-
-async function fetchDataWeek(week) {
-    week = (!!week) ? week : 1;
-
-    const presenceURL = `${API_URL}/presence/${week}`;
-
-    try {
-        const response = await fetch(presenceURL, { headers: HEADERS });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data;
-
-    } catch (error) {
-        console.error('Erro ao buscar dados das presenças:', error);
-        throw error;
-    }
-}
-
-function calcCurrentWeek() {
-    var today = new Date();
-    var beginYear = new Date(today.getFullYear(), 0, 1);
-    var daysToday = Math.floor((today - beginYear) / (24 * 60 * 60 * 1000));
-    var atualWeek = Math.ceil((daysToday + beginYear.getDay() + 1) / 7);
-
-    atualWeek = calcAdjustedWeek(atualWeek)
-    atualWeek = Math.max(1, Math.min(53, atualWeek));
-
-    return atualWeek;
-}
-
-function calcAdjustedWeek(week) {
-    week = (week > 52) ? 52 : week;
-    week = (week < 1) ? 1 : week;
-    return week;
-}
-
-function calcInterval(week) {
-    const isMobile = window.innerWidth <= 580;
-    const qtdSemanas = isMobile ? 2 : 4;
-    var weeks = []
-    var [week, limit] = (week < 5) ? [week, Number(week) + qtdSemanas] : [Number(week) - qtdSemanas, week];
-
-    for (var i = week; i <= limit; i++) {
-        weeks.push(i);
-    }
-    return weeks
-}
-
-
-function buildPresenceTable(data) {
-    const currentWeek = calcCurrentWeek();
-    const table = document.getElementById('presence-table');
-    const hasNoData = document.getElementById('has-no-data');
-
-    var selectedWeek = document.getElementById('current-week').value;
-    selectedWeek = (!!selectedWeek) ? selectedWeek : calcCurrentWeek();
-    selectedWeek = calcAdjustedWeek(selectedWeek);
-
-    // Obter todas as semanas únicas e ordenar
-    const weeks = calcInterval(selectedWeek);
-
-    var totalSum = new Array(weeks.length).fill(0);
-
-    // Criar cabeçalho
-    let headerHTML = '<thead><tr><th>Nome</th>';
-    weeks.forEach(week => {
-        headerHTML += (week === currentWeek ? `<th class="current-system-week">S${week}★</th>` : `<th>S${week}</th>`);
     });
 
-    headerHTML += '</tr></thead>';
+    renderPresences();
+}
 
-    // Criar corpo da tabela
-    let bodyHTML = '<tbody>';
+function renderPresences() {
+    const week = getWeek();
 
+    htmx.ajax('GET', `/presence/${week}/${NUM_WEEKS}`, {
+        handler: function (element, response) {
 
-    data.person.forEach(person => {
-        bodyHTML += `<tr><td class="person-name" data-person-id="${person.id}">${person.name}</td>`;
-
-        var tot = 0;
-
-        weeks.forEach(week => {
-
-            // Buscar presença para esta pessoa nesta semana
-            const presence = data.presence.find(p =>
-                p.person_id === person.id && p.week === week
-            );
-
-            // Totaliza por semana
-            if (presence && presence.present) {
-                const v = (!!totalSum[tot]) ? totalSum[tot] : 0;
-                totalSum[tot] = v + 1;
+            if (response.xhr.status >= 400) {
+                showToast(`Os dados não estão disponíveis! (${response.xhr.statusText} Error.)`, true);
             }
 
-            tot += 1;
+            const dados = JSON.parse(response.xhr.responseText);
+            const template = document.getElementById('presences-matrix').innerHTML;
+            const result = document.getElementById('result');
 
-            const className = (presence && presence.present) ? 'present' : 'absent';
-
-            bodyHTML += `<td><button class="presence ${className} ${(week === currentWeek ? 'current-system-week' : '')}" data-person-id="${person.id}" data-week="${week}">`;
-
-            bodyHTML += (presence) ? '✓' : '';
-            bodyHTML += '</button></td>';
-        });
-
-        bodyHTML += '</tr>';
+            if (dados.summary.totalPresent === 0) {
+                showToast(`Não há dados na semana ${week}, nem nas próximas.`, true);
+            }
+            result.innerHTML = Mustache.render(template, dados);
+        }
     });
-
-    bodyHTML += '</tbody>';
-
-    table.innerHTML = headerHTML + bodyHTML;
-
-    const personName = document.getElementsByClassName('person-name');
-
-    [...personName].forEach(td => {
-        td.setAttribute('onclick', 'showPersonDialog(event)');
-    });
-
-    const btn = document.getElementsByClassName('presence');
-    [...btn].forEach(td => {
-        td.setAttribute('onclick', 'updatePresence(event)');
-    });
-
-    var total = document.createElement('tr');
-    total.style.fontWeight = 'bold';
-
-    var totalLabel = document.createElement('td');
-    totalLabel.className = 'total-cell';
-    totalLabel.textContent = 'Total';
-    total.appendChild(totalLabel);
-
-    // Criar rodapé com totais
-    for (var s = 0; s < totalSum.length; s++) {
-        var tdTotal = document.createElement('td');
-        tdTotal.className = 'total-cell';
-        tdTotal.textContent = totalSum[s];
-        total.appendChild(tdTotal);
-    }
-
-    table.appendChild(total);
 }
 
-async function showPersonDialog(evt) {
-    const obj = evt.target;
-    const personId = obj.getAttribute("data-person-id");
-    const dlg = document.getElementById('person-details');
-    const personName = document.getElementById("dlg-name");
-    const phoneLink = document.getElementById('dlg-phone');
-
-    const person = await fetchDataPerson(personId);
-
-    if (person) {
-        personName.innerHTML = person.name;
-        phoneLink.innerHTML = `Telefone: ${person.phone}`;
-        phoneLink.href = `https://wa.me/${person.phone}`;
-        dlg.classList.add('show');
-    }
-}
-
-async function closePersonDialog() {
-    console.log("OOOKKKK");
-
-    const dlg = document.getElementById('person-details');
-    dlg.classList.remove('show');
-}
 
 // Função que persiste alteração de uma presença na API
 async function updatePresence(evt) {
@@ -206,64 +62,81 @@ async function updatePresence(evt) {
         }
     });
 
-    rebuild();
+    renderPresences();
+}
+
+function getWeek() {
+    var weekElm = document.getElementById('current-week');
+    week = (weekElm.value) ? weekElm.value : calcCurrentWeek();
+    week = Math.max(1, Math.min(53, week));
+    weekElm.value = week;
+    return week;
 }
 
 
-async function addPerson() {
-    const personURL = `${API_URL}/person`;
-    const objName = document.getElementById('new-person');
-    const objPhone = document.getElementById('new-person-phone');
+// detecta click repetido em h2Title
+const btnPresence = document.getElementsByClassName('presence');
+const h2Title = document.getElementById('h2-title');
+var h2TitleClick = 0;
 
-    const name = objName.value.trim();
-    const phone = objPhone.value.trim();
+h2Title.addEventListener('click', (event) => {
+    if (event.ctrlKey) {
+        h2TitleClick += 1;
 
-    if (name) {
+        if (h2TitleClick > 7) {
+            [...btnPresence].forEach(btn => {
+                btn.classList.add('alterable');
+            });
+        }
+    }
 
-        await fetch(personURL, {
-            method: 'POST',
-            headers: HEADERS,
-            body: JSON.stringify({ name: name, phone: phone })
-        }).then(response => {
-            if (!response.ok) {
-                showToast(`Não foi possível adicionar o participante (Erro: ${response.status}).`, true);
-            }
-            objName.value = '';
-            objPhone.value = '';
+    if (event.shiftKey) {
+        h2TitleClick = 0;
+        [...btnPresence].forEach(btn => {
+            btn.classList.remove('alterable');
         });
+    }
+});
 
-        rebuild();
+function formatPhone(phone) {
+    if (!phone) return '';
+    const cleaned = cleanPhone(phone);
+
+    if (cleaned.length === 11) {
+        return `(${cleaned.substr(0, 2)}) ${cleaned.substr(2, 5)}-${cleaned.substr(7)}`;
+    } else if (cleaned.length === 10) {
+        return `(${cleaned.substr(0, 2)}) ${cleaned.substr(2, 4)}-${cleaned.substr(6)}`;
     }
 }
 
+function getInitials(dados) {
+    return dados.person.name.split(' ')
+        .map(n => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
+}
+
+function cleanPhone(phone) {
+    if (!phone) return '';
+    return phone.replace(/\D/g, '');
+}
+
+// calcula semana atual
+function calcCurrentWeek() {
+    var today = new Date();
+    var beginYear = new Date(today.getFullYear(), 0, 1);
+    var daysToday = Math.floor((today - beginYear) / (24 * 60 * 60 * 1000));
+    var atualWeek = Math.ceil((daysToday + beginYear.getDay() + 1) / 7);
+
+    return Math.max(1, Math.min(53, atualWeek));
+}
+
+// seta semana atual no input
 function setCurrentWeek() {
-    document.getElementById('current-week').value = calcCurrentWeek();
-    rebuild();
+    const elm = document.getElementById('current-week');
+    elm.value = calcCurrentWeek();
+    renderPresences();
 }
 
-
-async function rebuild() {
-    const loadingDiv = document.getElementById('loading');
-    const errorDiv = document.getElementById('error');
-    const table = document.getElementById('presence-table');
-
-    var selectedWeek = document.getElementById('current-week').value;
-    selectedWeek = (!!selectedWeek) ? selectedWeek : calcCurrentWeek();
-    selectedWeek = calcAdjustedWeek(selectedWeek);
-
-    try {
-        const data = await fetchDataWeek(selectedWeek);
-
-        loadingDiv.style.display = 'none';
-        table.style.display = 'table';
-
-        buildPresenceTable(data);
-    } catch (error) {
-
-        loadingDiv.style.display = 'none';
-
-        showToast(`Erro! Não foi possível exibir os dados! ${error}`, true)
-    }
-}
-
-rebuild();
+window.onload = () => renderPresences();

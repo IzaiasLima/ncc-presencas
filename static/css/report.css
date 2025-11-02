@@ -1,0 +1,36 @@
+.container.full {
+    width: 100%;
+    max-width: unset;
+}
+
+#result.full {
+    overflow-x: scroll;
+}
+
+.table-fixed {
+    table-layout: fixed;
+}
+
+.presence.mini,
+.presence.mini {
+    padding: 0;
+    width: 15px;
+    height: 15px;
+    font-size: 1rem;
+}
+
+th.mini,
+td.mini {
+    padding: 3px;
+    width: 3rem;
+    /* height: 15px; */
+    font-size: 1rem;
+}
+
+td:first-child,
+th:first-child {
+    width: 10rem;
+    padding: 5px;
+    background: hsl(from var(--bg-color) h s l / 75%);
+    backdrop-filter: blur(1px);
+}
