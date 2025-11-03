@@ -4,7 +4,8 @@
 }
 
 .header img.back {
-    cursor: pointer;
+    width: 20px;
+    height: 20px;
 }
 
 h1.full {

@@ -21,7 +21,7 @@
             <div class="card">
                 <div class="header">
                     <h1>Frequência Semanal do NCC</h1>
-                    <img class="logout" src="../images/exit.png" onclick="event.preventDefault(); logout();" alt="exit">
+                    <img src="../images/exit.png" onclick="event.preventDefault(); logout();" alt="exit">
                 </div>
 
                 <div hx-ext="client-side-templates">
@@ -41,7 +41,6 @@
                     <div class="navigation">
                         <div class="weeks">
                             <div>
-                                <!-- <label>Semana:</label> -->
                                 <input type="number" id="current-week" min="1" max="53" onchange="renderPresences()">
                                 <div class="btns-weeks">
                                     <button class="btn primary" onclick="renderPresences()">Seleciona Semana</button>
@@ -62,7 +61,7 @@
                             {{/nucleos}}
                         </select>
                         <button class="btn primary" onclick="window.location='/p/pages/report.html'">
-                            Tabela Completa
+                            Quadro Geral
                         </button>
                     </template>
 
@@ -99,33 +98,21 @@
                                             {{#isCurrent}}current-week{{/isCurrent}}" data-person-id="{{personId}}"
                                             data-week="{{week}}" onclick="updatePresence(event)">✓
                                         </button>
-
-                                        <!-- present}} -->
-                                        <!-- <button class="presence absent {{#isCurrent}}current-week{{/isCurrent}}"
-                                                data-person-id="{{ personId}}" data-week="{{ week }}"
-                                                onclick="updatePresence(event)">&nbsp;</button> -->
-                                        <!-- /present}} -->
                                     </td>
                                     <!-- {{/weekData}} -->
-
                                 </tr>
                                 <!-- {{/presences}} -->
-
                             </tbody>
-
                             <tfoot>
                                 <tr class="total-cell">
                                     <td class="total-cell">Total</td>
-
                                     <!-- {{#weekTotals}} -->
                                     <td>
                                         <div class="total-present">✔ {{present}}</div>
                                         <div><small>{{percent}}%</small></div>
                                     </td>
                                     <!-- {{/weekTotals}} -->
-
                                 </tr>
-
                                 <tr>
                                     <td class="summary">Resumo</td>
                                     <td colspan="{{weeks.length}}">
@@ -215,10 +202,6 @@
             <span id="message">
                 <!-- Mensagem de notificação -->
             </span>
-        </div>
-
-        <div id="empty-state" style="display: none;">
-            Adicione participantes para começar o acompanhamento da frequência.
         </div>
 
         <script src="../js/auth.js"></script>
