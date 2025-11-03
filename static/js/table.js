@@ -63,11 +63,9 @@ async function updatePresence(evt) {
     const personId = btn.getAttribute("data-person-id");
     const week = btn.getAttribute("data-week");
     const isPresent = btn.classList.contains('present');
+    btn.classList.toggle('present');
 
     const presenceURL = `${API_URL}/presence`;
-
-    console.log('ok');
-
 
     await fetch(presenceURL, {
         method: 'POST',
@@ -80,14 +78,7 @@ async function updatePresence(evt) {
         }
     });
 
-    renderPresences();
-}
-
-function hasValue(val) {
-    if (val === undefined || val === nulll || val < 1) {
-        return false;
-    }
-    return true;
+    // renderPresences();
 }
 
 function getWeek() {
