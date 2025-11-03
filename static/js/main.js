@@ -66,3 +66,27 @@ async function closePersonDialog() {
     const dlg = document.getElementById('person-details');
     dlg.classList.remove('show');
 }
+
+function formatPhone(phone) {
+    if (!phone) return '';
+    const cleaned = cleanPhone(phone);
+
+    if (cleaned.length === 11) {
+        return `(${cleaned.substr(0, 2)}) ${cleaned.substr(2, 5)}-${cleaned.substr(7)}`;
+    } else if (cleaned.length === 10) {
+        return `(${cleaned.substr(0, 2)}) ${cleaned.substr(2, 4)}-${cleaned.substr(6)}`;
+    }
+}
+
+function getInitials(dados) {
+    return dados.person.name.split(' ')
+        .map(n => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
+}
+
+function cleanPhone(phone) {
+    if (!phone) return '';
+    return phone.replace(/\D/g, '');
+}

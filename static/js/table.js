@@ -15,16 +15,22 @@ async function addPerson() {
             showToast(`Não foi possível cadastrar o participante. (Erro: ${response.status}).`, true);
         }
     });
-
     renderPresences();
 }
 
 function renderPresences() {
     const week = getWeek();
+    // const nucleos = document.getElementById('nucleos');
+    const nucleo = document.getElementById('nucleo')?.value;
 
-    htmx.ajax('GET', `/presence/${week}/${NUM_WEEKS}`, {
+    var PRESENCE_URL = `/presence/${week}/${NUM_WEEKS}`
+
+    if (nucleo && nucleo > 0) {
+        PRESENCE_URL = `${PRESENCE_URL}/${nucleo}`;
+    }
+
+    htmx.ajax('GET', PRESENCE_URL, {
         handler: function (element, response) {
-
             if (response.xhr.status >= 400) {
                 showToast(`Os dados não estão disponíveis! (${response.xhr.statusText} Error.)`, true);
             }
@@ -37,6 +43,14 @@ function renderPresences() {
                 showToast(`Não há dados na semana ${week}, nem nas próximas.`, true);
             }
             result.innerHTML = Mustache.render(template, dados);
+
+            const templateSelect = document.getElementById('select-template').innerHTML;
+            const nucleosSelect = document.getElementById('nucleos-select');
+            nucleosSelect.innerHTML = Mustache.render(templateSelect, dados);
+
+            if (dados.nucleos.length > 0) {
+                nucleosSelect?.classList.add('show');
+            }
         }
     });
 }
@@ -63,6 +77,13 @@ async function updatePresence(evt) {
     });
 
     renderPresences();
+}
+
+function hasValue(val) {
+    if (val === undefined || val === nulll || val < 1) {
+        return false;
+    }
+    return true;
 }
 
 function getWeek() {
@@ -97,30 +118,6 @@ h2Title.addEventListener('click', (event) => {
         });
     }
 });
-
-function formatPhone(phone) {
-    if (!phone) return '';
-    const cleaned = cleanPhone(phone);
-
-    if (cleaned.length === 11) {
-        return `(${cleaned.substr(0, 2)}) ${cleaned.substr(2, 5)}-${cleaned.substr(7)}`;
-    } else if (cleaned.length === 10) {
-        return `(${cleaned.substr(0, 2)}) ${cleaned.substr(2, 4)}-${cleaned.substr(6)}`;
-    }
-}
-
-function getInitials(dados) {
-    return dados.person.name.split(' ')
-        .map(n => n[0])
-        .slice(0, 2)
-        .join('')
-        .toUpperCase();
-}
-
-function cleanPhone(phone) {
-    if (!phone) return '';
-    return phone.replace(/\D/g, '');
-}
 
 // calcula semana atual
 function calcCurrentWeek() {

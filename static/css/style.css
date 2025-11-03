@@ -6,6 +6,7 @@
     --bg-dark-color: rgb(0, 0, 0, 0.75);
     --text-color: #010c1b;
     --text-iverted-color: #fdfdfd;
+    --text-mute-color: #767676;
     --presence-color: #16a34a;
     --border-radius: 8px;
 }
@@ -87,6 +88,10 @@ body {
     }
 }
 
+#result {
+    padding-top: 22px;
+}
+
 
 h1 {
     font-size: 2rem;
@@ -151,10 +156,11 @@ h1 {
     }
 }
 
-input {
+input,
+select {
     width: 100%;
     flex: 1;
-    padding: 10px 16px;
+    padding: 10px;
     border: 1px solid #d1d5db;
     border-radius: var(--border-radius);
     font-size: 1rem;
@@ -169,6 +175,7 @@ input:focus {
 input[type="number"] {
     min-width: 40px;
     max-width: 80px;
+    color: var(--text-mute-color);
 
     @media (width <=768px) {
         height: 43px;
@@ -180,17 +187,18 @@ input[type="number"] {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    /* padding-bottom: 10px; */
     gap: 16px;
-    margin-bottom: 16px;
+    /* margin-bottom: 16px; */
 
     & .weeks {
         display: flex;
         width: 100%;
-        padding: 20px 0;
-        flex-direction: row;
+        padding-top: 16px;
+        /* flex-direction: row; */
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 14px;
+        /* margin-bottom: 14px; */
         gap: 10px;
 
         & div {
@@ -205,7 +213,8 @@ input[type="number"] {
         }
 
         @media (width <=768px) {
-            padding: 15px 0;
+            /* padding: 15px 0; */
+            /* padding-bottom: 16px; */
             flex-direction: column;
             justify-content: start;
             justify-items: center;
@@ -219,9 +228,33 @@ input[type="number"] {
     }
 }
 
-.navigation label {
-    font-weight: 600;
-    color: var(--text-color);
+#nucleos-select {
+    display: none;
+    width: 100%;
+    /* max-width: 370px; */
+    padding-top: 16px;
+    justify-content: space-between;
+
+    align-items: center;
+    /* margin-bottom: 14px; */
+    gap: 10px;
+
+    & select,
+    & option {
+        font-weight: 100;
+        font-size: 1.05rem;
+        color: var(--text-mute-color);
+        background-color: var(--bg-color);
+    }
+
+    &.show {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    @media (width <=768px) {
+        /* width: 90%; */
+    }
 }
 
 .table-container {
@@ -397,6 +430,7 @@ a:hover {
     display: flex;
     width: 10vw;
     height: 10vh;
+    margin-top: 60px;
     align-self: center;
     justify-self: center;
     justify-content: center;
@@ -409,7 +443,8 @@ a:hover {
 }
 
 .htmx-indicator {
-    display: none;
+
+    display: inline;
 }
 
 .htmx-request .htmx-indicator {

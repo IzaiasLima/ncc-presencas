@@ -3,6 +3,15 @@
     max-width: unset;
 }
 
+.header img.back {
+    cursor: pointer;
+}
+
+h1.full {
+    flex: 1;
+    text-align: center;
+}
+
 #result.full {
     overflow-x: scroll;
 }
@@ -14,8 +23,8 @@
 .presence.mini,
 .presence.mini {
     padding: 0;
-    width: 15px;
-    height: 15px;
+    width: 25px;
+    height: 20px;
     font-size: 1rem;
 }
 

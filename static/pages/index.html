@@ -39,7 +39,7 @@
                 <div class="navigation">
                     <div class="weeks">
                         <div>
-                            <label>Semana:</label>
+                            <!-- <label>Semana:</label> -->
                             <input type="number" id="current-week" min="1" max="53" onchange="renderPresences()">
                             <div class="btns-weeks">
                                 <button class="btn primary" onclick="renderPresences()">Seleciona Semana</button>
@@ -54,6 +54,21 @@
                 </div>
 
                 <div hx-ext="client-side-templates">
+                    <div id="nucleos-select">
+                        <!-- Select será criado aqui -->
+                    </div>
+
+                    <template id="select-template">
+                        <select id="nucleo" name="nucleo" onchange="renderPresences()">
+                            <option selected disabled>Selecione o Núcleo</option>
+                            {{#nucleos}}
+                                <option type="number" value="{{ ncc_id}}">{{ ncc_name }}</option>
+                            {{/nucleos}}
+                        </select>
+                        <button class="btn primary" onclick="window.location='/p/pages/report.html'">
+                            Tabela Completa
+                        </button>
+                    </template>
 
                     <div id="result">
                         <!-- Os dados vão ser exibidos aqui. -->

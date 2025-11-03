@@ -118,9 +118,15 @@ class MatrixRow(BaseModel):
     weekData: List[WeekData]
 
 
+class NucleosRead(BaseModel):
+    ncc_id: int
+    ncc_name: str | None
+
+
 class PresenceMatrix(BaseModel):
     """Schema for the complete presence matrix"""
 
+    nucleos: List[NucleosRead]
     heads: List[str]
     weeks: List[int]
     presences: List[MatrixRow]

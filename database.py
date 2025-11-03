@@ -4,7 +4,6 @@ from config import DATABASE_URL, AUTH_TOKEN
 
 engine = create_engine(
     f"{DATABASE_URL}?secure=true",
-    echo=True,
     connect_args={
         "auth_token": AUTH_TOKEN,
         "check_same_thread": False,

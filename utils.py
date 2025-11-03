@@ -1,4 +1,4 @@
-def build_presence_matrix(persons, presences, weeks):
+def build_presence_matrix(persons, presences, weeks, nucleos):
     # Criar mapa de presenças por pessoa e semana
     presence_map = {}
     for p in presences:
@@ -20,7 +20,12 @@ def build_presence_matrix(persons, presences, weeks):
                 }
             )
         presence_rows.append(
-            {"personId": person.id, "name": person.name, "weekData": week_data}
+            {
+                "personId": person.id,
+                "name": person.name,
+                "phone": person.phone,
+                "weekData": week_data,
+            }
         )
 
     # Calcular totais por semana
@@ -51,6 +56,7 @@ def build_presence_matrix(persons, presences, weeks):
     heads = [f"S{x}★" if current_week() == x else f"S{x}" for x in weeks]
 
     return {
+        "nucleos": nucleos,
         "heads": heads,
         "weeks": weeks,
         "presences": presence_rows,

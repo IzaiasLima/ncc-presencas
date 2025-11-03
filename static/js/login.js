@@ -5,8 +5,8 @@ document.body.addEventListener('htmx:configRequest', function (evt) {
   }
 });
 
-
 async function handleLogin(username, password) {
+
   const URL = API_URL + '/token';
 
   try {
@@ -31,7 +31,7 @@ async function handleLogin(username, password) {
 }
 
 function login() {
-
+  const originPage = document.referrer;
   const dataForm = document.getElementById('login-form');
 
   if (!dataForm.checkValidity()) {
@@ -45,7 +45,9 @@ function login() {
   handleLogin(username, password)
     .then(data => {
       window.auth.setToken(data.access_token, { persist: true });
-      window.location.href = 'index.html';
+      window.location.href = originPage;
+      console.log(originPage);
+
       return true;
     })
     .then(dados => {

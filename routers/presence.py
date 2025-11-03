@@ -1,14 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
-from sqlalchemy.orm import joinedload
 
 from models import PersonDB, PresenceDB, UserDB
 from security import get_current_user
 from database import get_db
 from utils import current_week, build_presence_matrix
 from schemas import (
-    PersonPresences,
     PresenceCreate,
     PresenceMatrix,
     PresenceRead,
@@ -62,7 +60,7 @@ async def get_persons_with_presences(
 
     weeks = [w for w in range(1, 54)]
 
-    dados = build_presence_matrix(persons, presences, weeks)
+    dados = build_presence_matrix(persons, presences, weeks, [])
     return dados
 
 
@@ -85,7 +83,10 @@ def list_presences_by_person(
 
     person = (
         session.query(PersonDB)
-        .filter(PersonDB.owner_id == current_user.id, PersonDB.id == id)
+        .filter(
+            PersonDB.id == id,
+            or_(PersonDB.owner_id == current_user.id, current_user.isAdmin() == True),
+        )
         .first()
     )
     presences = (
@@ -96,7 +97,7 @@ def list_presences_by_person(
             PresenceDB.week <= semana_last,
             PresenceDB.present == True,
             PresenceDB.person_id == id,
-            PresenceDB.owner_id == current_user.id,
+            or_(PresenceDB.owner_id == current_user.id, current_user.isAdmin() == True),
         )
         .order_by(PresenceDB.week)
         .all()
@@ -125,7 +126,7 @@ def list_presences_by_person(
 
 
 @router.get("/{week}/{num_weeks}", response_model=PresenceMatrix)
-def list_presences(
+def list_presences_by_week(
     week: int,
     num_weeks: int,
     current_user: UserDB = Depends(get_current_user),
@@ -137,13 +138,26 @@ def list_presences(
 
     """
 
-    dados = get_presences_matrix(week, num_weeks, current_user, session)
+    dados = get_presences_matrix(week, num_weeks, 0, current_user, session)
+    return dados
+
+
+@router.get("/{week}/{num_weeks}/{owner_id}", response_model=PresenceMatrix)
+def list_presences_by_week_and_owner(
+    week: int,
+    num_weeks: int,
+    owner_id: int,
+    current_user: UserDB = Depends(get_current_user),
+    session: Session = Depends(get_db),
+):
+    dados = get_presences_matrix(week, num_weeks, owner_id, current_user, session)
     return dados
 
 
 def get_presences_matrix(
     week: int,
     numWeeks: int,
+    owner_id: int,
     current_user: UserDB = Depends(get_current_user),
     session: Session = Depends(get_db),
 ):
@@ -165,23 +179,20 @@ def get_presences_matrix(
 
     persons = None
 
-    # if person_id:
-    #     persons = (
-    #         session.query(PersonDB)
-    #         .filter(PersonDB.owner_id == current_user.id, PersonDB.id == person_id)
-    #         .order_by(PersonDB.name)
-    #         .all()
-    #     )
-    # else:
-    persons = (
-        session.query(PersonDB)
-        .filter(
-            # PersonDB.owner_id == current_user.id,
-            or_(PersonDB.owner_id == current_user.id, current_user.isAdmin() == True),
+    if owner_id > 0:  # seleciona por núcleo
+        persons = (
+            session.query(PersonDB)
+            .filter(PersonDB.owner_id == owner_id, current_user.isAdmin() == True)
+            .order_by(PersonDB.name)
+            .all()
         )
-        .order_by(PersonDB.name)
-        .all()
-    )
+    else:  # seleciona apenas o nucleo do usuario conectado
+        persons = (
+            session.query(PersonDB)
+            .filter(PersonDB.owner_id == current_user.id)
+            .order_by(PersonDB.name)
+            .all()
+        )
 
     presences = (
         session.query(PresenceDB)
@@ -193,7 +204,19 @@ def get_presences_matrix(
         )
         .all()
     )
-    dados = build_presence_matrix(persons, presences, weeks)
+
+    users = None
+
+    if current_user.isAdmin():
+        users = session.query(UserDB).all()
+
+    nucleos = []
+
+    if users:
+        for user in users:
+            nucleos.append({"ncc_id": user.id, "ncc_name": user.nucleo})
+
+    dados = build_presence_matrix(persons, presences, weeks, nucleos)
     return dados
 
 
