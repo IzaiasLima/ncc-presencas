@@ -1,8 +1,3 @@
-# security.py
-"""
-Funções de segurança: autenticação, JWT, hash de senha
-"""
-
 from datetime import datetime, timedelta
 from typing import Optional
 from fastapi import Depends, HTTPException, status

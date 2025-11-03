@@ -12,7 +12,7 @@ Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI(
-    title="People Simple API with Auth JWT",
+    title="API Simples para Resgistro de Presenças",
     description="API REST para registrar a presença de pessoas no NCC",
     version="1.0.0",
 )

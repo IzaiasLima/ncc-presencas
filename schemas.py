@@ -1,8 +1,3 @@
-# schemas.py
-"""
-Schemas Pydantic para validação de dados
-"""
-
 from typing import List, Optional
 from pydantic import BaseModel, EmailStr, ConfigDict
 
@@ -56,7 +51,6 @@ class PresenceRead(PresenceCreate):
     """Schema para leitura das presencas"""
 
     id: int
-    # owner_id: int
     person: PersonRead
 
     model_config = ConfigDict(from_attributes=True)

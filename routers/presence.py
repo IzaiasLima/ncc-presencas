@@ -104,7 +104,6 @@ def list_presences_by_person(
     )
 
     week_presences = []
-    # presence = None
     qtd_weeks = 0
 
     for w in weeks:
