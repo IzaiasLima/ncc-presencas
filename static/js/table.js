@@ -44,17 +44,18 @@ function renderPresences() {
             }
             result.innerHTML = Mustache.render(template, dados);
 
+            // renderiza o select se houver uma lista de nucleos
             const templateSelect = document.getElementById('select-template').innerHTML;
             const nucleosSelect = document.getElementById('nucleos-select');
             nucleosSelect.innerHTML = Mustache.render(templateSelect, dados);
 
             if (dados.nucleos.length > 0) {
+                // exibe o select se houver lista de nucleos
                 nucleosSelect?.classList.add('show');
             }
         }
     });
 }
-
 
 // Função que persiste alteração de uma presença na API
 async function updatePresence(evt) {
@@ -64,6 +65,9 @@ async function updatePresence(evt) {
     const isPresent = btn.classList.contains('present');
 
     const presenceURL = `${API_URL}/presence`;
+
+    console.log('ok');
+
 
     await fetch(presenceURL, {
         method: 'POST',
@@ -93,31 +97,6 @@ function getWeek() {
     weekElm.value = week;
     return week;
 }
-
-
-// detecta click repetido em h2Title
-const btnPresence = document.getElementsByClassName('presence');
-const h2Title = document.getElementById('h2-title');
-var h2TitleClick = 0;
-
-h2Title.addEventListener('click', (event) => {
-    if (event.ctrlKey) {
-        h2TitleClick += 1;
-
-        if (h2TitleClick > 7) {
-            [...btnPresence].forEach(btn => {
-                btn.classList.add('alterable');
-            });
-        }
-    }
-
-    if (event.shiftKey) {
-        h2TitleClick = 0;
-        [...btnPresence].forEach(btn => {
-            btn.classList.remove('alterable');
-        });
-    }
-});
 
 // calcula semana atual
 function calcCurrentWeek() {

@@ -360,7 +360,8 @@ a:hover {
     font-size: 2rem;
     font-weight: 600;
 
-    &.current-week {
+    &.current-week,
+    &.alterable {
         cursor: pointer;
         pointer-events: all
     }
