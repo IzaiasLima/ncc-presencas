@@ -65,7 +65,9 @@ def renew_password(
         raise HTTPException(status_code=404, detail="Invalid user_id or email")
 
     if user_in.password is not None:
-        user.password = user_in.password
+        hashed = get_password_hash(user_in.password)
+        user.hashed_password = hashed
+        # update_user = user
 
     db.commit()
     db.refresh(user)

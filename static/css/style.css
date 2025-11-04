@@ -30,6 +30,10 @@ body {
     background-color: #ebeef8;
     min-height: 100vh;
     padding: 20px;
+
+    @media (width <=768px) {
+        padding: 10px;
+    }
 }
 
 .container {
@@ -182,6 +186,14 @@ input[type="number"] {
         height: 43px;
         padding: 10px;
     }
+}
+
+#person-name {
+    flex: 2;
+}
+
+#person-phone {
+    flex: 1;
 }
 
 .navigation {
@@ -365,10 +377,6 @@ a:hover {
         background: var(--presence-color);
         color: white;
     }
-
-    /* &.absent {
-        background: #e5e7eb;
-    } */
 
     &:hover {
         transform: scale(1.1);
