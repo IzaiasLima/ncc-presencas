@@ -13,30 +13,32 @@
     </head>
 
     <body>
-        <div class="container login">
-            <div class="header login">
-                <h1>Autenticação</h1>
-            </div>
+        <div class="container">
+            <div class="login">
+                <div class="header login">
+                    <h1>Autenticação</h1>
+                </div>
 
-            <div class="card">
-                <form id="login-form" onsubmit="event.preventDefault(); login();">
-                    <div class="input-group login-card">
-                        <input type="email" id="email" placeholder="E-mail" required>
-                        <input type="password" id="password" placeholder="Senha" required>
-                        <button type="submit" class="btn primary login">
-                            <img src="../images/unlock.png" alt="unlock"> Autenticar
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <div class="card login">
+                    <form id="login-form" onsubmit="event.preventDefault(); login();">
+                        <div class="input-group login-card">
+                            <input type="email" id="email" placeholder="E-mail" required>
+                            <input type="password" id="password" placeholder="Senha" required>
+                            <button type="submit" class="btn primary login">
+                                <img src="../images/unlock.png" alt="unlock"> Autenticar
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
-            <div class="instructions">
-                <h2>Instruções:</h2>
-                <ul>
-                    <li>• Solicite ao gestor do sistema o registro do seu login.</li>
-                    <li>• Use o e-mail e a senha recebido para se autenticar.</li>
-                    <li>• Para recuperar e-mail/senha, fale com o gestor do sistema.</li>
-                </ul>
+                <div class="instructions">
+                    <h2>Instruções:</h2>
+                    <ul>
+                        <li>• Solicite ao gestor do sistema o registro do seu login.</li>
+                        <li>• Use o e-mail e a senha recebido para se autenticar.</li>
+                        <li>• Para recuperar e-mail/senha, fale com o gestor do sistema.</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
