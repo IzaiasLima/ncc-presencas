@@ -15,6 +15,13 @@ const HEADERS = {
     'Authorization': `Bearer ${window.auth.getToken()}`, 'Content-Type': 'application/json'
 }
 
+// ativa o Service Worker que permite e site ser instalado como APP
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('../js/service-worker.js')
+        .then(reg => console.log('Service Worker registrado'))
+        .catch(err => console.log('Erro:', err));
+}
+
 // Exibe mensagem tipo TOAST
 function showToast(message, err = false, duration = 5000) {
     const toast = document.getElementById('toast');

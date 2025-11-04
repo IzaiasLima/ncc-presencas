@@ -1,0 +1,21 @@
+{
+  "name": "NCC Acompanhamento de Frequência",
+  "short_name": "NCC Frequência",
+  "description": "Registra a frequência dos participantes dos NCC para auxiliar o pastorio mais efetivo.",
+  "start_url": "/p/pages/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
