@@ -94,6 +94,10 @@ body {
     @media (width <=768px) {
         & h1 {
             font-size: 1.45rem;
+
+            span {
+                display: none;
+            }
         }
     }
 }
