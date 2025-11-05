@@ -46,12 +46,16 @@ function renderPresences() {
 
             // renderiza o select se houver uma lista de nucleos
             const templateSelect = document.getElementById('select-template').innerHTML;
+            const personAdd = document.getElementById('person-add');
             const nucleosSelect = document.getElementById('nucleos-select');
             nucleosSelect.innerHTML = Mustache.render(templateSelect, dados);
 
             if (dados.nucleos.length > 0) {
-                // exibe o select se houver lista de nucleos
+                // exibe selecionar núcleo, se houver lista de nucleos
                 nucleosSelect?.classList.add('show');
+            } else {
+                // exibe adicionar participante
+                personAdd?.classList.add('show');
             }
         }
     });
