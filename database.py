@@ -10,8 +10,6 @@ engine = create_engine(
     },
 )
 
-# engine = create_engine("sqlite:///local_db/ncc.db", connect_args={"check_same_thread": False})
-
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 Base = declarative_base()
 
