@@ -39,14 +39,16 @@ body {
 .container {
     display: flex;
     flex-direction: column;
-    align-items: center;
     max-width: 800px;
     margin: 0 auto;
+
+    &:has(.login) {
+        align-items: center;
+    }
 
     &>.login {
         display: flex;
         width: 100%;
-        /* margin: auto; */
         max-width: 420px;
         padding-top: 10vh;
         flex-direction: column;
@@ -225,6 +227,16 @@ label {
 
 #person-name {
     flex: 2;
+
+    & div {
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+.person-name div {
+    display: flex;
+    justify-content: space-between;
 }
 
 #person-phone {
@@ -340,6 +352,17 @@ td {
 
         @media (width <=768px) {
             flex-direction: column;
+        }
+    }
+
+    & .delete {
+        position: relative;
+        top: -1em;
+        left: .5em;
+        color: #f3ecec;
+
+        &:hover {
+            color: #a51c1c;
         }
     }
 

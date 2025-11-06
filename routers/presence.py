@@ -23,7 +23,13 @@ def create_presence(
     current_user: UserDB = Depends(get_current_user),
 ):
 
-    exists = get_presence(session, data_in)
+    exists = (
+        session.query(PresenceDB)
+        .filter(
+            PresenceDB.person_id == data_in.person_id, PresenceDB.week == data_in.week
+        )
+        .first()
+    )
 
     if exists:
         exists.present = data_in.present
@@ -47,7 +53,12 @@ def create_presence(
 async def get_persons_with_presences(
     session: Session = Depends(get_db), current_user: UserDB = Depends(get_current_user)
 ):
-    if not current_user.role or "ADMIN" not in current_user.role:
+    """
+    Lista um quadro completo com todas as presenças.
+
+    """
+
+    if not current_user.is_admin():
         raise HTTPException(status_code=401, detail="Insufficient credentials")
 
     persons = session.query(PersonDB).order_by(PersonDB.name).all()
@@ -85,7 +96,7 @@ def list_presences_by_person(
         session.query(PersonDB)
         .filter(
             PersonDB.id == id,
-            or_(PersonDB.owner_id == current_user.id, current_user.isAdmin() == True),
+            or_(PersonDB.owner_id == current_user.id, current_user.is_admin() == True),
         )
         .first()
     )
@@ -97,7 +108,9 @@ def list_presences_by_person(
             PresenceDB.week <= semana_last,
             PresenceDB.present == True,
             PresenceDB.person_id == id,
-            or_(PresenceDB.owner_id == current_user.id, current_user.isAdmin() == True),
+            or_(
+                PresenceDB.owner_id == current_user.id, current_user.is_admin() == True
+            ),
         )
         .order_by(PresenceDB.week)
         .all()
@@ -132,12 +145,14 @@ def list_presences_by_week(
     session: Session = Depends(get_db),
 ):
     """
-    Lista todas as pessoas geridas pelo usuário autenticado
-    presenças de na lista de semanas selecionadas.
+    Lista todas as pessoas presentes no intervalo de semanas selecionadas.
 
     """
 
-    dados = get_presences_matrix(week, num_weeks, 0, current_user, session)
+    owner_id = current_user.id
+    is_admin = current_user.is_admin()
+
+    dados = get_presences_matrix(week, num_weeks, owner_id, is_admin, session)
     return dados
 
 
@@ -149,7 +164,17 @@ def list_presences_by_week_and_owner(
     current_user: UserDB = Depends(get_current_user),
     session: Session = Depends(get_db),
 ):
-    dados = get_presences_matrix(week, num_weeks, owner_id, current_user, session)
+    """
+    Lista todas as pessoas, geridas por 'owner', presentes no intervalo de semanas selecionadas.
+
+    """
+
+    is_admin = current_user.is_admin()
+
+    if not is_admin:
+        raise HTTPException(status_code=401, detail="Insufficient credentials")
+
+    dados = get_presences_matrix(week, num_weeks, owner_id, is_admin, session)
     return dados
 
 
@@ -157,8 +182,8 @@ def get_presences_matrix(
     week: int,
     numWeeks: int,
     owner_id: int,
-    current_user: UserDB = Depends(get_current_user),
-    session: Session = Depends(get_db),
+    is_admin: bool,
+    session: Session,
 ):
     """
     Obtém as pessoas geridas pelo usuário autenticado
@@ -178,20 +203,12 @@ def get_presences_matrix(
 
     persons = None
 
-    if owner_id > 0:  # seleciona por núcleo
-        persons = (
-            session.query(PersonDB)
-            .filter(PersonDB.owner_id == owner_id, current_user.isAdmin() == True)
-            .order_by(PersonDB.name)
-            .all()
-        )
-    else:  # seleciona apenas o nucleo do usuario conectado
-        persons = (
-            session.query(PersonDB)
-            .filter(PersonDB.owner_id == current_user.id)
-            .order_by(PersonDB.name)
-            .all()
-        )
+    persons = (
+        session.query(PersonDB)
+        .filter(PersonDB.owner_id == owner_id)
+        .order_by(PersonDB.name)
+        .all()
+    )
 
     presences = (
         session.query(PresenceDB)
@@ -199,14 +216,15 @@ def get_presences_matrix(
             PresenceDB.week >= week,
             PresenceDB.week <= week_limit,
             PresenceDB.present == True,
-            or_(PresenceDB.owner_id == current_user.id, current_user.isAdmin() == True),
+            PresenceDB.owner_id == owner_id,
         )
         .all()
     )
 
     users = None
 
-    if current_user.isAdmin():
+    # seleciona todos no gestores de NCC e seus núcleos
+    if is_admin:
         users = session.query(UserDB).all()
 
     nucleos = []
@@ -216,15 +234,4 @@ def get_presences_matrix(
             nucleos.append({"ncc_id": user.id, "ncc_name": user.nucleo})
 
     dados = build_presence_matrix(persons, presences, weeks, nucleos)
-    return dados
-
-
-def get_presence(session: Session, presence: PresenceCreate):
-    dados = (
-        session.query(PresenceDB)
-        .filter(
-            PresenceDB.person_id == presence.person_id, PresenceDB.week == presence.week
-        )
-        .first()
-    )
     return dados

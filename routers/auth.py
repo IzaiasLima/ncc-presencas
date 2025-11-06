@@ -53,7 +53,7 @@ def renew_password(
     - **password**: nova senha do usuário
     """
 
-    if not current_user.isAdmin():
+    if not current_user.is_admin():
         raise HTTPException(status_code=401, detail="Insufficient credentials")
 
     user = db.query(UserDB).filter(UserDB.id == user_id).first()

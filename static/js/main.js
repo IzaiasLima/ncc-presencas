@@ -43,10 +43,7 @@ function showToast(message, err = false, duration = 5000) {
 // show dialog
 async function showPersonDialog(evt) {
     const obj = evt.target;
-
-    const container = obj.getAttribute("container");
     const personId = obj.getAttribute("data-person-id");
-    const dlg = document.getElementById('person-details');
 
     htmx.ajax('GET', `/presence/person/${personId}`, {
         handler: function (element, response) {

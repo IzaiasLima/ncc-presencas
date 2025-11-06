@@ -17,7 +17,7 @@ class UserDB(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     person = relationship("PersonDB", back_populates="owner")
 
-    def isAdmin(self):
+    def is_admin(self):
         return self.role and ("ADMIN" in self.role)
 
 
@@ -31,7 +31,7 @@ class PersonDB(Base):
     phone = Column(String, nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("UserDB", back_populates="person")
-    presence = relationship("PresenceDB", back_populates="person")
+    presence = relationship("PresenceDB", back_populates="person", passive_deletes=True)
 
 
 class PresenceDB(Base):
@@ -43,5 +43,5 @@ class PresenceDB(Base):
     week = Column(Integer, nullable=False)
     present = Column(Boolean, nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
-    person_id = Column(Integer, ForeignKey("person.id"))
+    person_id = Column(Integer, ForeignKey("person.id", ondelete="RESTRICT"))
     person = relationship("PersonDB", back_populates="presence")

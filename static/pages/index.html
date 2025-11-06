@@ -26,18 +26,20 @@
                 </div>
 
                 <div hx-ext="client-side-templates">
-                    <div id="person-add" class="input-group">
-                        <input type="text" id="person-name" placeholder="Nome do participante">
-                        <input type="text" id="person-phone" placeholder="Telefone">
-                        <button class="btn primary" onclick="addPerson()">
-                            <span>
-                                <img src="../images/plus.png">
-                            </span>
-                            <span class="btn-label">
-                                Adicionar
-                            </span>
-                        </button>
-                    </div>
+                    <form>
+                        <div id="person-add" class="input-group">
+                            <input type="text" id="person-name" placeholder="Nome do participante" required>
+                            <input type="text" id="person-phone" placeholder="Telefone" required>
+                            <button class="btn primary" onclick="addPerson()">
+                                <span>
+                                    <img src="../images/plus.png">
+                                </span>
+                                <span class="btn-label">
+                                    Adicionar
+                                </span>
+                            </button>
+                        </div>
+                    </form>
 
                     <div class="navigation">
                         <div class="weeks">
@@ -90,8 +92,15 @@
 
                                 <!-- {{#presences}} -->
                                 <tr>
-                                    <td class="person-name" data-person-id="{{personId}}"
-                                        onclick="showPersonDialog(event)">{{name}}</td>
+                                    <td class="person-name">
+                                        <div>
+                                            <span data-person-id="{{personId}}"
+                                                onclick="showPersonDialog(event)">{{name}}</span>
+
+                                            <span class="delete" data-person-id="{{personId}}" title="Excluir"
+                                                data-person-name="{{name}}" onclick="deletePerson(event)">✗</span>
+                                        </div>
+                                    </td>
 
                                     <!-- {{#weekData}} -->
                                     <td>
@@ -162,11 +171,10 @@
                 <header>
                     <span onclick="closePersonDialog()">×</span>
                 </header>
-
                 <div class="dlg-body">
                     <div class="person-header">
+                        <div class="person-avatar">{{initials}}</div>
                         {{#person}}
-                            <div class="person-avatar">{{initials}}</div>
                             <div class="person-info">
                                 <h3>{{name}}</h3>
                                 <a href="https://wa.me/{{phone}}" target="_blank" rel="nofollow noopener noreferrer">

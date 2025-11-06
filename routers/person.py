@@ -1,12 +1,12 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import UserDB, PersonDB
+from models import PresenceDB, UserDB, PersonDB
 from schemas import PersonCreate, PersonRead, PersonUpdate
 from security import get_current_user
-from utils import cleanPhone
+from utils import clean_phone, is_blank
 
 router = APIRouter(prefix="/person", tags=["person"])
 
@@ -17,12 +17,17 @@ def create_person(
     current_user: UserDB = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    person = PersonDB(
-        name=person_in.name, phone=cleanPhone(person_in.phone), owner_id=current_user.id
+    if is_blank(person_in.name) or is_blank(person_in.phone):
+        raise HTTPException(status_code=400, detail="Person name ou phone is empty")
+
+    person_in = PersonDB(
+        name=person_in.name,
+        phone=clean_phone(person_in.phone),
+        owner_id=current_user.id,
     )
 
     try:
-        existing_person = (
+        db_person = (
             db.query(PersonDB)
             .filter(
                 PersonDB.name == person_in.name,
@@ -30,21 +35,23 @@ def create_person(
             )
             .first()
         )
-        if existing_person:
-            raise HTTPException(
-                status_code=400, detail="Person with this name already exists"
-            )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal server error")
+        if not db_person:
+            # cria novo registrp
+            db.add(person_in)
+            db.commit()
+            db.refresh(person_in)
+            return person_in
+        else:
+            # atualiza registro
+            db_person.name = person_in.name
+            db_person.phone = person_in.phone
+            db.commit()
+            db.refresh(db_person)
+            return db_person
 
-    try:
-        db.add(person)
-        db.commit()
-        db.refresh(person)
-        return person
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}.")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}.")
 
 
 @router.get("", response_model=List[PersonRead])
@@ -94,22 +101,24 @@ def update_person(
     return person
 
 
-@router.delete("/{person_id}", status_code=204)
+@router.delete("/{person_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_person(
     person_id: int,
     current_user: UserDB = Depends(get_current_user),
-    db: Session = Depends(get_db),
+    session: Session = Depends(get_db),
 ):
 
-    person = (
-        db.query(PersonDB)
-        .filter(PersonDB.id == person_id, PersonDB.owner_id == current_user.id)
-        .first()
-    )
+    if not current_user.is_admin():
+        raise HTTPException(status_code=401, detail="Insufficient credentials")
+
+    if has_presence(session, person_id):
+        raise HTTPException(status_code=400, detail="Person has presences")
+
+    person = session.query(PersonDB).filter(PersonDB.id == person_id).first()
     if not person:
         raise HTTPException(status_code=404, detail="Person not found")
-    db.delete(person)
-    db.commit()
+    session.delete(person)
+    session.commit()
     return None
 
 
@@ -123,3 +132,14 @@ def get_person(db, person_id: int, current_user):
     if not person:
         raise HTTPException(status_code=404, detail="Person not found")
     return person
+
+
+def has_presence(session, id):
+    presences = (
+        session.query(PresenceDB)
+        .join(PersonDB)
+        .filter(PresenceDB.person_id == id)
+        .all()
+    )
+
+    return len(presences) > 0

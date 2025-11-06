@@ -85,6 +85,10 @@ def is_current(week):
     return week == current_week()
 
 
-def cleanPhone(phone: str):
+def clean_phone(phone: str):
     """Retorna apenas os dígitos"""
     return "".join(filter(str.isdigit, phone))
+
+
+def is_blank(s: str):
+    return s is None or s.strip() == ""

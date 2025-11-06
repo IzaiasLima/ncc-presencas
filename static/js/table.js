@@ -1,20 +1,45 @@
 // Adicionar pessoa na API
 async function addPerson() {
-    const personName = document.getElementById('person-name');
-    const personPhone = document.getElementById('person-phone');
-
+    const personName = document.getElementById('person-name').value;
+    const personPhone = document.getElementById('person-phone').value;
     const personURL = `${API_URL}/person`;
 
     await fetch(personURL, {
         method: 'POST',
         headers: HEADERS,
 
-        body: JSON.stringify({ name: personName.value, phone: personPhone.value })
+        body: JSON.stringify({ name: personName, phone: personPhone })
     }).then(response => {
         if (!response.ok) {
-            showToast(`Não foi possível cadastrar o participante. (Erro: ${response.status}).`, true);
+            showToast(`Não foi possível cadastrar o participante. (Erro: ${response}).`, true);
         }
     });
+
+    personPhone = '';
+    personName = '';
+
+    renderPresences();
+}
+
+async function deletePerson(evt) {
+    const obj = evt.target;
+    const personId = obj.getAttribute("data-person-id");
+    const personName = obj.getAttribute("data-person-name");
+    const personURL = `${API_URL}/person/${personId}`;
+
+    if (window.confirm(`Vai mesmo excluir ${personName.toUpperCase()}?`)) {
+        await fetch(personURL, {
+            method: 'DELETE',
+            headers: HEADERS,
+
+            // body: JSON.stringify({ name: personName, phone: personPhone })
+        }).then(response => {
+            if (!response.ok) {
+                showToast(`Não foi possível excluir o participante. (Erro: ${response.statusText}).`, true);
+            }
+        });
+    }
+
     renderPresences();
 }
 
@@ -81,8 +106,6 @@ async function updatePresence(evt) {
             showToast(`Não foi possível registrar a presença (Erro: ${response.status}).`, true);
         }
     });
-
-    // renderPresences();
 }
 
 function getWeek() {
