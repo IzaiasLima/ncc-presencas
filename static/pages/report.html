@@ -84,16 +84,12 @@
                                     <!-- {{#weekData}} -->
                                     <td class="report">
                                         {{#present}}
-                                            <button
-                                                class="presence report present {{#isCurrent}}current-week{{/isCurrent}}"
-                                                data-person-id="{{personId}}" data-week="{{week}}"
-                                                onclick="updatePresence(event)">✓</button>
+                                            <button class="presence report present" data-person-id="{{personId}}"
+                                                data-week="{{week}}">✓</button>
                                         {{/present}}
                                         {{^present}}
-                                            <button
-                                                class="presence report absent {{#isCurrent}}current-week{{/isCurrent}}"
-                                                data-person-id="{{ personId}}" data-week="{{ week }}"
-                                                onclick="updatePresence(event)">&nbsp;</button>
+                                            <button class="presence report absent" data-person-id="{{ personId}}"
+                                                data-week="{{ week }}">&nbsp;</button>
                                         {{/present}}
                                     </td>
                                     <!-- {{/weekData}} -->

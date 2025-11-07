@@ -104,10 +104,10 @@
 
                                     <!-- {{#weekData}} -->
                                     <td>
-                                        <button class="presence 
-                                            {{#present}}present{{/present}}
-                                            {{#isCurrent}}current-week{{/isCurrent}}" data-person-id="{{personId}}"
-                                            data-week="{{week}}" onclick="updatePresence(event)">✓
+                                        <button
+                                            class="presence {{#present}}present{{/present}} {{#isCurrent}}current-week{{/isCurrent}}"
+                                            data-person-id="{{personId}}" data-week="{{week}}"
+                                            onclick="updatePresence(event)">✓
                                         </button>
                                     </td>
                                     <!-- {{/weekData}} -->

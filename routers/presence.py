@@ -22,6 +22,9 @@ def create_presence(
     session: Session = Depends(get_db),
     current_user: UserDB = Depends(get_current_user),
 ):
+    # admin não altera registro de presença
+    if current_user.is_admin():
+        raise HTTPException(status_code=400, detail="Edit are not alowed")
 
     exists = (
         session.query(PresenceDB)

@@ -70,14 +70,19 @@ function renderPresences() {
             result.innerHTML = Mustache.render(template, dados);
 
             // renderiza o select se houver uma lista de nucleos
+            const btnsPresence = document.getElementsByClassName('presence');
             const templateSelect = document.getElementById('select-template').innerHTML;
             const personAdd = document.getElementById('person-add');
             const nucleosSelect = document.getElementById('nucleos-select');
             nucleosSelect.innerHTML = Mustache.render(templateSelect, dados);
 
+            // consulta feita pela secretaria
             if (dados.nucleos.length > 0) {
                 // exibe selecionar núcleo, se houver lista de nucleos
                 nucleosSelect?.classList.add('show');
+
+                // exclui a class que permite editar semana atual
+                [...btnsPresence].forEach(btn => { btn.classList.remove('current-week') });
             } else {
                 // exibe adicionar participante
                 personAdd?.classList.add('show');

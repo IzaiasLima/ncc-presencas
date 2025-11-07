@@ -88,6 +88,7 @@ def current_week():
 
 
 def is_current(week):
+    # return week == 38
     return week == current_week()
 
 
