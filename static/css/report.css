@@ -1,4 +1,4 @@
-.container.full {
+.container.report {
     width: 100%;
     max-width: unset;
 }
@@ -8,12 +8,12 @@
     height: 20px;
 }
 
-h1.full {
+h1.report {
     flex: 1;
     text-align: center;
 }
 
-#result.full {
+#result.report {
     overflow-x: scroll;
 }
 
@@ -21,19 +21,18 @@ h1.full {
     table-layout: fixed;
 }
 
-.presence.mini,
-.presence.mini {
+.presence.report,
+.presence.report {
     padding: 0;
     width: 25px;
     height: 20px;
     font-size: 1rem;
 }
 
-th.mini,
-td.mini {
+th.report,
+td.report {
     padding: 3px;
     width: 3rem;
-    /* height: 15px; */
     font-size: 1rem;
 }
 
@@ -43,4 +42,37 @@ th:first-child {
     padding: 5px;
     background: hsl(from var(--bg-color) h s l / 75%);
     backdrop-filter: blur(1px);
+
+    &.report {
+        z-index: 10;
+    }
+}
+
+.summary {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+    justify-content: space-between;
+    gap: 16px;
+
+    & .dialog {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: var(--text-iverted-color);
+        background-image: linear-gradient(to left top, #0749ab, #185ec0, #2674d6, #358aea, #44a0ff);
+        border-radius: var(--border-radius);
+        padding: 14px;
+
+        & h2 {
+            white-space: nowrap;
+            font-size: 1.7rem;
+
+            &.numbers {
+                font-size: 4rem;
+            }
+        }
+    }
 }

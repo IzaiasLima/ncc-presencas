@@ -377,7 +377,7 @@ th:first-child {
     position: sticky;
     left: 0;
     text-align: left;
-    z-index: 10;
+
 }
 
 td:first-child {

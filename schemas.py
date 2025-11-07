@@ -100,6 +100,7 @@ class Summary(BaseModel):
 
     totalPersons: int
     totalPresent: int
+    activeWeeksTotal: int
     percentPresent: float
     totalAbsent: int
 

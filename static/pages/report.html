@@ -19,12 +19,12 @@
     </head>
 
     <body>
-        <div class="container full">
+        <div class="container report">
             <div class="card">
                 <div class="header">
                     <img class="back" src="../images/arrow-back.png" onclick="(window.location='/p/pages/index.html')"
                         alt="back">
-                    <h1 class="full"><span>Acompanhamento de &nbsp;</span>Frequência dos NCCs - Quadro Geral</h1>
+                    <h1 class="report"><span>Acompanhamento de &nbsp;</span>Frequência dos NCCs - Quadro Geral</h1>
                 </div>
 
                 <div id="loading">
@@ -33,17 +33,43 @@
 
                 <div hx-ext="client-side-templates">
 
-                    <div id="result" class="full">
+                    <div id="result" class="report">
                         <!-- Os dados vão ser exibidos aqui. -->
                     </div>
 
                     <template id="presences-matrix">
+
+                        <div class="summary">
+                            {{#summary}}
+                                <div class="dialog">
+                                    <h2> Participantes Cadastrados</h2>
+                                    <h2 class="numbers">{{ totalPersons }}</h2>
+                                </div>
+                                <div class="dialog">
+                                    <h2> Semanas Ativas</h2>
+                                    <h2 class="numbers">{{ activeWeeksTotal }}</h2>
+                                </div>
+                                <div class="dialog">
+                                    <h2> Participações no Período</h2>
+                                    <h2 class="numbers">{{ totalPresent }}</h2>
+                                </div>
+                                <div class="dialog">
+                                    <h2> Ausências no Período</h2>
+                                    <h2 class="numbers">{{ totalAbsent }}</h2>
+                                </div>
+                                <div class="dialog">
+                                    <h2> Fequência Média</h2>
+                                    <h2 class="numbers">{{ percentPresent }}%</h2>
+                                </div>
+                            {{/summary}}
+                        </div>
+
                         <table class="table-fixed">
                             <thead>
                                 <tr>
-                                    <th class="mini">Nome</th>
+                                    <th class="report">Nome</th>
                                     <!-- {{#heads}} -->
-                                    <th id="S{{.}}" class="mini">{{.}}</th>
+                                    <th id="S{{.}}" class="report">{{.}}</th>
                                     <!-- {{/heads}} -->
                                 </tr>
                             </thead>
@@ -52,20 +78,20 @@
 
                                 <!-- {{#presences}} -->
                                 <tr>
-                                    <td class="person-name mini" data-person-id="{{personId}}"
+                                    <td class="person-name report" data-person-id="{{personId}}"
                                         onclick="showPersonDialog(event)">{{name}}</td>
 
                                     <!-- {{#weekData}} -->
-                                    <td class="mini">
+                                    <td class="report">
                                         {{#present}}
                                             <button
-                                                class="presence mini present {{#isCurrent}}current-week{{/isCurrent}}"
+                                                class="presence report present {{#isCurrent}}current-week{{/isCurrent}}"
                                                 data-person-id="{{personId}}" data-week="{{week}}"
                                                 onclick="updatePresence(event)">✓</button>
                                         {{/present}}
                                         {{^present}}
                                             <button
-                                                class="presence mini absent {{#isCurrent}}current-week{{/isCurrent}}"
+                                                class="presence report absent {{#isCurrent}}current-week{{/isCurrent}}"
                                                 data-person-id="{{ personId}}" data-week="{{ week }}"
                                                 onclick="updatePresence(event)">&nbsp;</button>
                                         {{/present}}
@@ -79,10 +105,10 @@
 
                             <tfoot>
                                 <tr class="total-cell">
-                                    <td class="total-cell mini">Total</td>
+                                    <td class="total-cell report">Total</td>
 
                                     <!-- {{#weekTotals}} -->
-                                    <td class=" mini">
+                                    <td class=" report">
                                         <div class="total-present">✔ {{present}}</div>
                                         <div><small>{{percent}}%</small></div>
                                     </td>
@@ -95,9 +121,6 @@
                 </div>
             </div>
 
-            <!-- <div class="statistics">
-                <h2 id="h2-title">Resumo geral por NCC:</h2>
-            </div> -->
         </div>
 
         <dialog id="person-details" class="dialog">

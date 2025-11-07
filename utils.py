@@ -48,20 +48,26 @@ def build_presence_matrix(persons, presences, weeks, nucleos):
         )
 
     # Calcular estatísticas gerais
-    total_cells = total_persons * len(weeks)
-    total_present = len([p for p in presences if p.present])
+    active_weeks = [p for p in week_totals if p.get("present") > 0]
+    total_present = sum([p.get("present") for p in active_weeks])
+    active_weeks_total = len(active_weeks)
+
+    # total_cells = total_persons * len(weeks)
+    total_cells = total_persons * active_weeks_total
     percent_present = round(total_present / total_cells * 100) if total_cells > 0 else 0
     total_absent = total_cells - total_present
 
     heads = [f"S{x}★" if current_week() == x else f"S{x}" for x in weeks]
 
     return {
+        "active_weeks": active_weeks,
         "nucleos": nucleos,
         "heads": heads,
         "weeks": weeks,
         "presences": presence_rows,
         "weekTotals": week_totals,
         "summary": {
+            "activeWeeksTotal": active_weeks_total,
             "totalPersons": total_persons,
             "totalPresent": total_present,
             "percentPresent": percent_present,
