@@ -39,7 +39,7 @@
 
                     <template id="presences-matrix">
 
-                        <div class="summary">
+                        <div class="summary report">
                             {{#summary}}
                                 <div class="dialog">
                                     <h2> Participantes Cadastrados</h2>
@@ -64,55 +64,57 @@
                             {{/summary}}
                         </div>
 
-                        <table class="table-fixed">
-                            <thead>
-                                <tr>
-                                    <th class="report">Nome</th>
-                                    <!-- {{#heads}} -->
-                                    <th id="S{{.}}" class="report">{{.}}</th>
-                                    <!-- {{/heads}} -->
-                                </tr>
-                            </thead>
+                        <div class="report-table">
+                            <table class="table-fixed">
+                                <thead>
+                                    <tr>
+                                        <th class="report">Nome</th>
+                                        <!-- {{#heads}} -->
+                                        <th id="S{{.}}" class="report">{{.}}</th>
+                                        <!-- {{/heads}} -->
+                                    </tr>
+                                </thead>
 
-                            <tbody>
+                                <tbody>
 
-                                <!-- {{#presences}} -->
-                                <tr>
-                                    <td class="person-name report" data-person-id="{{personId}}"
-                                        onclick="showPersonDialog(event)">{{name}}</td>
+                                    <!-- {{#presences}} -->
+                                    <tr>
+                                        <td class="person-name report" data-person-id="{{personId}}"
+                                            onclick="showPersonDialog(event)">{{name}}</td>
 
-                                    <!-- {{#weekData}} -->
-                                    <td class="report">
-                                        {{#present}}
-                                            <button class="presence report present" data-person-id="{{personId}}"
-                                                data-week="{{week}}">✓</button>
-                                        {{/present}}
-                                        {{^present}}
-                                            <button class="presence report absent" data-person-id="{{ personId}}"
-                                                data-week="{{ week }}">&nbsp;</button>
-                                        {{/present}}
-                                    </td>
-                                    <!-- {{/weekData}} -->
+                                        <!-- {{#weekData}} -->
+                                        <td class="report">
+                                            {{#present}}
+                                                <button class="presence report present" data-person-id="{{personId}}"
+                                                    data-week="{{week}}">✓</button>
+                                            {{/present}}
+                                            {{^present}}
+                                                <button class="presence report absent" data-person-id="{{ personId}}"
+                                                    data-week="{{ week }}">&nbsp;</button>
+                                            {{/present}}
+                                        </td>
+                                        <!-- {{/weekData}} -->
 
-                                </tr>
-                                <!-- {{/presences}} -->
+                                    </tr>
+                                    <!-- {{/presences}} -->
 
-                            </tbody>
+                                </tbody>
 
-                            <tfoot>
-                                <tr class="total-cell">
-                                    <td class="total-cell report">Total</td>
+                                <tfoot>
+                                    <tr class="total-cell">
+                                        <td class="total-cell report">Total</td>
 
-                                    <!-- {{#weekTotals}} -->
-                                    <td class=" report">
-                                        <div class="total-present">✔ {{present}}</div>
-                                        <div><small>{{percent}}%</small></div>
-                                    </td>
-                                    <!-- {{/weekTotals}} -->
+                                        <!-- {{#weekTotals}} -->
+                                        <td class=" report">
+                                            <div class="total-present">✔ {{present}}</div>
+                                            <div><small>{{percent}}%</small></div>
+                                        </td>
+                                        <!-- {{/weekTotals}} -->
 
-                                </tr>
-                            </tfoot>
-                        </table>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </template>
                 </div>
             </div>

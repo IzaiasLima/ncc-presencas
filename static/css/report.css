@@ -13,7 +13,10 @@ h1.report {
     text-align: center;
 }
 
-#result.report {
+/* #result.report {
+} */
+
+.report-table {
     overflow-x: scroll;
 }
 
@@ -48,13 +51,14 @@ th:first-child {
     }
 }
 
-.summary {
+.summary.report {
     position: relative;
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 40px;
     justify-content: space-between;
     gap: 16px;
+    overflow-x: hidden;
 
     & .dialog {
         flex: 1;

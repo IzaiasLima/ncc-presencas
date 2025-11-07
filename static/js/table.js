@@ -46,7 +46,7 @@ async function deletePerson(evt) {
 function renderPresences() {
     const week = getWeek();
     // const nucleos = document.getElementById('nucleos');
-    const nucleo = document.getElementById('nucleo')?.value;
+    const nucleo = parseInt(document.getElementById('nucleo')?.value);
 
     var PRESENCE_URL = `/presence/${week}/${NUM_WEEKS}`
 
@@ -83,6 +83,11 @@ function renderPresences() {
 
                 // exclui a class que permite editar semana atual
                 [...btnsPresence].forEach(btn => { btn.classList.remove('current-week') });
+
+                // exibe o nome do NCC
+                const nccNameElm = document.getElementById('ncc-name');
+                [...dados.nucleos].forEach(n => { if (n.ncc_id === nucleo) nccNameElm.innerHTML = n.ncc_name; });
+
             } else {
                 // exibe adicionar participante
                 personAdd?.classList.add('show');
