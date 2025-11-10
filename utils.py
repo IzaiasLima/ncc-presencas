@@ -57,7 +57,7 @@ def build_presence_matrix(persons, presences, weeks, nucleos):
     percent_present = round(total_present / total_cells * 100) if total_cells > 0 else 0
     total_absent = total_cells - total_present
 
-    heads = [f"S{x}★" if current_week() == x else f"S{x}" for x in weeks]
+    heads = [f"S{x}★" if is_current(x) else f"S{x}" for x in weeks]
 
     return {
         "active_weeks": active_weeks,
@@ -88,8 +88,7 @@ def current_week():
 
 
 def is_current(week):
-    # return week == 38
-    return week == current_week()
+    return week == current_week() - 1
 
 
 def clean_phone(phone: str):

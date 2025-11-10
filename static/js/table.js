@@ -76,7 +76,7 @@ function renderPresences() {
             const nucleosSelect = document.getElementById('nucleos-select');
             nucleosSelect.innerHTML = Mustache.render(templateSelect, dados);
 
-            // consulta feita pela secretaria
+            // ACESSO PELA SECRETARIA
             if (dados.nucleos.length > 0) {
                 // exibe selecionar núcleo, se houver lista de nucleos
                 nucleosSelect?.classList.add('show');
