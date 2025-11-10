@@ -76,6 +76,15 @@ def build_presence_matrix(persons, presences, weeks, nucleos):
     }
 
 
+def clean_phone(phone: str):
+    """Retorna apenas os dígitos"""
+    return "".join(filter(str.isdigit, phone))
+
+
+def is_blank(s: str):
+    return s is None or s.strip() == ""
+
+
 def current_week():
     from datetime import datetime
 
@@ -88,13 +97,4 @@ def current_week():
 
 
 def is_current(week):
-    return week == current_week() - 1
-
-
-def clean_phone(phone: str):
-    """Retorna apenas os dígitos"""
-    return "".join(filter(str.isdigit, phone))
-
-
-def is_blank(s: str):
-    return s is None or s.strip() == ""
+    return week == current_week()

@@ -42,8 +42,7 @@ def create_person(
             db.refresh(person_in)
             return person_in
         else:
-            # atualiza registro
-            db_person.name = person_in.name
+            # atualiza o telefone
             db_person.phone = person_in.phone
             db.commit()
             db.refresh(db_person)
