@@ -3,6 +3,13 @@
     --bg-border-color: #dbdfe3;
 }
 
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 220px;
+}
+
 #person-details,
 #report-sumary {
     position: absolute;
